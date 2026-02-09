@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import WelcomePage from './components/WelcomePage';
 import QuestionCard from './components/QuestionCard';
 import ResumePage from './components/ResumePage';
@@ -24,6 +24,14 @@ export default function App() {
   const [scores, setScores] = useState(null);
   const [report, setReport] = useState('');
 
+  // Use refs to avoid stale closures
+  const answersRef = useRef(answers);
+  answersRef.current = answers;
+  const indexRef = useRef(currentIndex);
+  indexRef.current = currentIndex;
+  const shuffledRef = useRef(shuffled);
+  shuffledRef.current = shuffled;
+
   const handleStart = useCallback(() => {
     setShuffled(shuffleQuestions());
     setCurrentIndex(0);
@@ -34,10 +42,10 @@ export default function App() {
   }, []);
 
   const handleAnswer = useCallback((questionId, value) => {
-    const newAnswers = { ...answers, [questionId]: value };
+    const newAnswers = { ...answersRef.current, [questionId]: value };
     setAnswers(newAnswers);
 
-    if (currentIndex < shuffled.length - 1) {
+    if (indexRef.current < shuffledRef.current.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
       // Last question
@@ -45,7 +53,7 @@ export default function App() {
       setScores(calculatedScores);
       setStage(STAGE.RESUME);
     }
-  }, [shuffled.length, currentIndex, answers]);
+  }, []);
 
   const handleBack = useCallback(() => {
     setCurrentIndex((prev) => Math.max(0, prev - 1));

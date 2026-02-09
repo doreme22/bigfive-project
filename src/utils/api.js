@@ -174,19 +174,19 @@ ${teamRole}
 
 ${ceiling.join('\n\n')}
 
-## 4. 发展建议
+## 4. 发展指南
 
-### 适合的职业方向
+### 职业方向
 
 **职业类型**：${careerType}
 
 **公司类型**：${companyType}
 
-### 适合的团队组合
+### 合作伙伴
 
 ${teamCombo}
 
-### 行为改变建议
+### 发展建议
 
 ${behaviorAdvice.join('\n\n')}
 
