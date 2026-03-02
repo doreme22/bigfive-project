@@ -1,5 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
+import { getCachedResume, setCachedResume } from '../utils/storage';
+import ModalOverlay from './ui/ModalOverlay';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.mjs',
@@ -24,7 +26,28 @@ export default function ResumePage({ onSubmit, onSkip }) {
   const [fileName, setFileName] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const [parsing, setParsing] = useState(false);
+  const [showCacheModal, setShowCacheModal] = useState(false);
+  const [cachedResume, setCachedResumeState] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Check for cached resume on mount
+  useEffect(() => {
+    const cached = getCachedResume();
+    if (cached && cached.text) {
+      setCachedResumeState(cached);
+      setShowCacheModal(true);
+    }
+  }, []);
+
+  const handleUseCached = () => {
+    setResumeText(cachedResume.text);
+    if (cachedResume.source) setFileName(cachedResume.source);
+    setShowCacheModal(false);
+  };
+
+  const handleDiscardCache = () => {
+    setShowCacheModal(false);
+  };
 
   const handleFileChange = async (file) => {
     if (!file) return;
@@ -59,11 +82,17 @@ export default function ResumePage({ onSubmit, onSkip }) {
     }
   };
 
+  const handleSubmit = () => {
+    // Cache the new resume
+    setCachedResume(resumeText, fileName || 'manual_input');
+    onSubmit(resumeText);
+  };
+
   return (
     <div className="min-h-screen flex flex-col px-6 py-8 bg-bg-dark">
       {/* Header */}
       <div className="animate-fade-in-up text-center mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1a6b4a] to-[#22875e] flex items-center justify-center mx-auto mb-4">
           <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
           </svg>
@@ -145,18 +174,18 @@ export default function ResumePage({ onSubmit, onSkip }) {
         />
 
         <p className="text-xs text-text-secondary/50 mt-2 text-center">
-          你的数据仅用于本次分析，不会被存储
+          简历将被缓存以便下次复用
         </p>
       </div>
 
       {/* Buttons */}
       <div className="animate-fade-in-up mt-6 space-y-3" style={{ animationDelay: '0.3s' }}>
         <button
-          onClick={() => onSubmit(resumeText)}
+          onClick={handleSubmit}
           disabled={!resumeText.trim() || parsing}
           className={`w-full py-4 rounded-2xl font-semibold text-lg transition-all ${
             resumeText.trim() && !parsing
-              ? 'bg-gradient-to-r from-emerald-500 to-teal-400 text-white shadow-xl shadow-primary/25 active:scale-[0.98]'
+              ? 'bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white shadow-xl shadow-primary/25 active:scale-[0.98]'
               : 'bg-bg-card text-text-secondary/50 cursor-not-allowed'
           }`}
         >
@@ -169,6 +198,20 @@ export default function ResumePage({ onSubmit, onSkip }) {
           跳过，仅查看测评结果
         </button>
       </div>
+
+      {/* Resume cache modal */}
+      {showCacheModal && (
+        <ModalOverlay
+          title="检测到之前的简历"
+          onConfirm={handleUseCached}
+          onCancel={handleDiscardCache}
+          confirmText="使用"
+          cancelText="重新上传"
+        >
+          <p>上次上传的简历仍在缓存中{cachedResume.source ? `（来源：${cachedResume.source}）` : ''}。</p>
+          <p className="mt-1">是否直接使用？</p>
+        </ModalOverlay>
+      )}
     </div>
   );
 }

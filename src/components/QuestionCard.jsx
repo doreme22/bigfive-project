@@ -8,7 +8,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
   const progress = ((index) / total) * 100;
 
   useEffect(() => {
-    setSelected(currentAnswer || null);
+    setSelected(currentAnswer || null); // eslint-disable-line react-hooks/set-state-in-effect -- sync selected on question change
   }, [question.id, currentAnswer]);
 
   const handleSelect = (value) => {
@@ -42,7 +42,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
             className="h-full rounded-full transition-all duration-500 ease-out"
             style={{
               width: `${progress}%`,
-              background: `linear-gradient(90deg, #10b981, #34d399)`,
+              background: `linear-gradient(90deg, #1a6b4a, #22875e)`,
             }}
           />
         </div>
@@ -52,7 +52,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
             onClick={handleBack}
             disabled={index === 0}
             className={`flex items-center gap-1 text-sm transition-colors ${
-              index === 0 ? 'text-text-secondary/30' : 'text-text-secondary active:text-white'
+              index === 0 ? 'text-text-secondary/30' : 'text-text-secondary active:text-primary'
             }`}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -61,7 +61,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
             上一题
           </button>
           <span className="text-sm text-text-secondary">
-            <span className="text-white font-semibold">{index + 1}</span> / {total}
+            <span className="text-text-primary font-semibold">{index + 1}</span> / {total}
           </span>
           <div className="w-12" />
         </div>
@@ -77,7 +77,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
           <div className="flex justify-center mb-6">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-xl"
-              style={{ background: `linear-gradient(135deg, #10b98190, #10b981)` }}
+              style={{ background: `linear-gradient(135deg, #1a6b4a90, #1a6b4a)` }}
             >
               {index + 1}
             </div>
@@ -110,7 +110,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
                   }`}>
                     {opt.value}
                   </div>
-                  <span className={`text-sm font-medium ${isSelected ? 'text-white' : 'text-text-secondary'}`}>
+                  <span className={`text-sm font-medium ${isSelected ? 'text-text-primary' : 'text-text-secondary'}`}>
                     {opt.label}
                   </span>
                   {isSelected && (
