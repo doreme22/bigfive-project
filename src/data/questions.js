@@ -67,15 +67,6 @@ export const dimensionNames = {
   O: '开放性',
 };
 
-// 维度颜色映射
-export const dimensionColors = {
-  E: '#f472b6',
-  A: '#34d399',
-  C: '#60a5fa',
-  N: '#fbbf24',
-  O: '#a78bfa',
-};
-
 // 选项定义
 export const options = [
   { value: 1, label: '非常不同意' },

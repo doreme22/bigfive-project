@@ -12,6 +12,7 @@ export default function ResultPage({
   displayedJobs,
   onRefreshJobs,
   onSelectJob,
+  onGoResume,
   onBack,
 }) {
   const hasReport = !!report;
@@ -67,7 +68,23 @@ export default function ResultPage({
       {/* Content */}
       <div className="px-6 mt-4">
         {activeTab === 'test' && (
-          <TestResultsTab scores={scores} />
+          <>
+            <TestResultsTab scores={scores} />
+
+            {/* Prompt to upload resume when no report */}
+            {!hasReport && onGoResume && (
+              <button
+                onClick={onGoResume}
+                className="w-full mt-6 glass rounded-2xl p-5 text-center active:bg-bg-card-hover transition-colors"
+              >
+                <svg className="w-8 h-8 text-primary mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+                <p className="text-sm font-semibold text-text-primary mb-1">上传简历，获取 AI 深度报告</p>
+                <p className="text-xs text-text-secondary">结合简历生成职场画像、岗位推荐与成长建议</p>
+              </button>
+            )}
+          </>
         )}
 
         {activeTab === 'report' && (

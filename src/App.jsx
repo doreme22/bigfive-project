@@ -144,6 +144,22 @@ function reducer(state, action) {
     case 'SHOW_RESULT':
       return { ...state, stage: STAGE.RESULT };
 
+    case 'GO_RESUME_FROM_RESULT':
+      return { ...state, stage: STAGE.RESUME, report: '', jobTypeRecs: [], growthSuggestions: [] };
+
+    case 'GO_RESUME_FROM_HISTORY':
+      return {
+        ...state,
+        bfiScores: action.payload.bfiScores,
+        mbtiType: action.payload.mbtiType,
+        jungScores: action.payload.jungScores,
+        assessmentType: action.payload.assessmentType,
+        report: '',
+        jobTypeRecs: [],
+        growthSuggestions: [],
+        stage: STAGE.RESUME,
+      };
+
     case 'SELECT_HISTORY':
       return { ...state, selectedHistoryId: action.payload, stage: STAGE.HISTORY_DETAIL };
 
@@ -235,6 +251,21 @@ export default function App() {
       dispatch({ type: 'SHOW_RESULT' });
     } catch (err) {
       console.error('Report generation failed:', err);
+
+      // Still save history with available data
+      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType);
+      addHistoryRecord({
+        assessmentType: state.assessmentType || 'bfi',
+        bfiScores: state.bfiScores,
+        mbtiType: state.mbtiType,
+        jungScores: state.jungScores,
+        personalityTag,
+        resumeText,
+        report: '',
+        jobTypeRecs: [],
+        growthSuggestions: [],
+      });
+
       clearQuizProgress();
       dispatch({ type: 'SHOW_RESULT' });
     }
@@ -380,6 +411,7 @@ export default function App() {
           displayedJobs={state.displayedJobs}
           onRefreshJobs={handleRefreshJobs}
           onSelectJob={(id) => dispatch({ type: 'SELECT_JOB', payload: id })}
+          onGoResume={() => dispatch({ type: 'GO_RESUME_FROM_RESULT' })}
           onBack={() => dispatch({ type: 'SET_STAGE', payload: STAGE.WELCOME })}
         />
       )}
@@ -396,6 +428,7 @@ export default function App() {
           recordId={state.selectedHistoryId}
           onBack={() => dispatch({ type: 'SET_STAGE', payload: STAGE.HISTORY })}
           onSelectJob={(id) => dispatch({ type: 'SELECT_JOB', payload: id })}
+          onGoResume={(record) => dispatch({ type: 'GO_RESUME_FROM_HISTORY', payload: record })}
         />
       )}
 
