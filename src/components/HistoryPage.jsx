@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PageHeader from './ui/PageHeader';
+import ModalOverlay from './ui/ModalOverlay';
 import { getHistory, deleteHistoryRecord } from '../utils/storage';
 
 const typeLabels = {
@@ -16,11 +17,19 @@ const typeColors = {
 
 export default function HistoryPage({ onBack, onSelectRecord }) {
   const [history, setHistory] = useState(() => getHistory());
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
-  const handleDelete = (e, id) => {
+  const handleDeleteClick = (e, id) => {
     e.stopPropagation();
-    deleteHistoryRecord(id);
-    setHistory(getHistory());
+    setDeleteTarget(id);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteTarget) {
+      deleteHistoryRecord(deleteTarget);
+      setHistory(getHistory());
+    }
+    setDeleteTarget(null);
   };
 
   const formatDate = (ts) => {
@@ -57,7 +66,7 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
                     </span>
                   </div>
                   <button
-                    onClick={(e) => handleDelete(e, record.id)}
+                    onClick={(e) => handleDeleteClick(e, record.id)}
                     className="text-text-secondary/40 active:text-red-400 transition-colors p-1"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -86,6 +95,18 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
           </div>
         )}
       </div>
+
+      {deleteTarget && (
+        <ModalOverlay
+          title="删除记录"
+          onConfirm={handleConfirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+          confirmText="删除"
+          cancelText="取消"
+        >
+          <p>确定要删除这条测评记录吗？删除后无法恢复。</p>
+        </ModalOverlay>
+      )}
     </div>
   );
 }
