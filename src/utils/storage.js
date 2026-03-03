@@ -78,6 +78,19 @@ export function getHistoryRecord(id) {
   return history.find((r) => r.id === id) || null;
 }
 
+export function updateHistoryRecord(id, fields) {
+  try {
+    const history = getHistory();
+    const idx = history.findIndex((r) => r.id === id);
+    if (idx === -1) return false;
+    history[idx] = { ...history[idx], ...fields };
+    localStorage.setItem(KEYS.HISTORY, JSON.stringify(history));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function deleteHistoryRecord(id) {
   try {
     const history = getHistory().filter((r) => r.id !== id);

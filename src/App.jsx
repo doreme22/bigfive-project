@@ -14,7 +14,7 @@ import { calculateScores } from './utils/scoring';
 import { generateReport, generateJobTypeRecommendations, generateGrowthSuggestions } from './utils/api';
 import { mergePersonalityData, generatePersonalityTag } from './utils/personality';
 import { getMatchingJobs, pickRandomJobs } from './data/jobs';
-import { saveQuizProgress, clearQuizProgress, addHistoryRecord } from './utils/storage';
+import { saveQuizProgress, clearQuizProgress, addHistoryRecord, updateHistoryRecord } from './utils/storage';
 
 const STAGE = {
   HOME: 'home',
@@ -47,6 +47,7 @@ const initialState = {
   selectedHistoryId: null,
   selectedJobId: null,
   previousStage: null,
+  supplementingRecordId: null,
 };
 
 function reducer(state, action) {
@@ -69,6 +70,7 @@ function reducer(state, action) {
         growthSuggestions: [],
         displayedJobs: [],
         excludedJobIds: [],
+        supplementingRecordId: null,
       };
     }
 
@@ -116,6 +118,7 @@ function reducer(state, action) {
         mbtiType: action.payload.mbtiType,
         jungScores: action.payload.jungScores,
         assessmentType: state.bfiScores ? 'both' : 'manual',
+        supplementingRecordId: null,
         stage: STAGE.RESUME,
       };
 
@@ -145,7 +148,7 @@ function reducer(state, action) {
       return { ...state, stage: STAGE.RESULT };
 
     case 'GO_RESUME_FROM_RESULT':
-      return { ...state, stage: STAGE.RESUME, report: '', jobTypeRecs: [], growthSuggestions: [] };
+      return { ...state, stage: STAGE.RESUME, supplementingRecordId: null, report: '', jobTypeRecs: [], growthSuggestions: [] };
 
     case 'GO_RESUME_FROM_HISTORY':
       return {
@@ -154,6 +157,7 @@ function reducer(state, action) {
         mbtiType: action.payload.mbtiType,
         jungScores: action.payload.jungScores,
         assessmentType: action.payload.assessmentType,
+        supplementingRecordId: action.payload.id,
         report: '',
         jobTypeRecs: [],
         growthSuggestions: [],
@@ -235,7 +239,7 @@ export default function App() {
 
       // Save to history
       const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType);
-      addHistoryRecord({
+      const historyData = {
         assessmentType: state.assessmentType || 'bfi',
         bfiScores: state.bfiScores,
         mbtiType: state.mbtiType,
@@ -245,7 +249,14 @@ export default function App() {
         report: finalReport || '',
         jobTypeRecs: jobRecs,
         growthSuggestions: growthSugs,
-      });
+        resumeSkipped: false,
+      };
+
+      if (state.supplementingRecordId) {
+        updateHistoryRecord(state.supplementingRecordId, historyData);
+      } else {
+        addHistoryRecord(historyData);
+      }
 
       clearQuizProgress();
       dispatch({ type: 'SHOW_RESULT' });
@@ -254,7 +265,7 @@ export default function App() {
 
       // Still save history with available data
       const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType);
-      addHistoryRecord({
+      const failedData = {
         assessmentType: state.assessmentType || 'bfi',
         bfiScores: state.bfiScores,
         mbtiType: state.mbtiType,
@@ -264,12 +275,18 @@ export default function App() {
         report: '',
         jobTypeRecs: [],
         growthSuggestions: [],
-      });
+      };
+
+      if (state.supplementingRecordId) {
+        updateHistoryRecord(state.supplementingRecordId, failedData);
+      } else {
+        addHistoryRecord(failedData);
+      }
 
       clearQuizProgress();
       dispatch({ type: 'SHOW_RESULT' });
     }
-  }, [state.bfiScores, state.jungScores, state.mbtiType, state.assessmentType]);
+  }, [state.bfiScores, state.jungScores, state.mbtiType, state.assessmentType, state.supplementingRecordId]);
 
   const handleSkip = useCallback(() => {
     clearQuizProgress();
