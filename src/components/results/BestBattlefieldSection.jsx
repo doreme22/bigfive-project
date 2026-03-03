@@ -1,6 +1,7 @@
 import Markdown from 'react-markdown';
 import JobCard from '../ui/JobCard';
 
+
 export default function BestBattlefieldSection({
   report,
   displayedJobs,
@@ -11,6 +12,8 @@ export default function BestBattlefieldSection({
   if (!section && (!displayedJobs || displayedJobs.length === 0)) {
     return null;
   }
+
+  const subs = section ? splitByBoldItems(section) : [];
 
   return (
     <div className="glass rounded-3xl p-6 mb-4">
@@ -23,14 +26,27 @@ export default function BestBattlefieldSection({
         <h3 className="text-base font-bold text-text-primary">最佳战场</h3>
       </div>
 
-      {/* AI report content */}
-      {section && (
+      {/* AI report sub-sections */}
+      {subs.length > 1 ? (
+        <div className="space-y-3 mb-4">
+          {subs.map((sub, i) => {
+            return (
+              <div key={i} className="rounded-xl p-4 bg-bg-dark/50">
+                <h4 className="text-sm font-semibold mb-2 text-text-primary">{sub.title}</h4>
+                <div className="report-content text-sm">
+                  <Markdown>{sub.content}</Markdown>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : section ? (
         <div className="report-content mb-4">
           <Markdown>{section}</Markdown>
         </div>
-      )}
+      ) : null}
 
-      {/* Mock job cards */}
+      {/* Job cards */}
       {displayedJobs && displayedJobs.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-2">
@@ -61,4 +77,51 @@ function extractSection(markdown, heading) {
   const regex = new RegExp(`##\\s*${heading}([\\s\\S]*?)(?=##\\s|$)`);
   const match = markdown.match(regex);
   return match ? match[1].trim() : null;
+}
+
+/**
+ * Split by every bold heading pattern: **Title**、**Title**：content、### Title
+ * Each becomes its own sub-section.
+ */
+function splitByBoldItems(markdown) {
+  if (!markdown) return [];
+
+  const lines = markdown.split('\n');
+  const sections = [];
+  let currentTitle = '';
+  let contentLines = [];
+
+  const flush = () => {
+    const content = contentLines.join('\n').trim();
+    if (currentTitle || content) {
+      sections.push({ title: currentTitle, content });
+    }
+    currentTitle = '';
+    contentLines = [];
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    const h3 = trimmed.match(/^###\s+(.+)/);
+    if (h3) {
+      flush();
+      currentTitle = h3[1].replace(/\*\*/g, '');
+      continue;
+    }
+
+    // **Title** standalone or **Title**：content or - **Title**：content
+    const bold = trimmed.match(/^[-*]?\s*\*\*([^*]+)\*\*\s*[：:]?\s*(.*)/);
+    if (bold) {
+      flush();
+      currentTitle = bold[1];
+      if (bold[2]) contentLines.push(bold[2]);
+      continue;
+    }
+
+    contentLines.push(line);
+  }
+
+  flush();
+  return sections;
 }

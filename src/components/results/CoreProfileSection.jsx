@@ -1,9 +1,11 @@
 import Markdown from 'react-markdown';
 
+
 export default function CoreProfileSection({ report }) {
-  // Extract ## 核心画像 section from report markdown
   const section = extractSection(report, '核心画像');
   if (!section) return null;
+
+  const subs = splitByStandaloneBold(section);
 
   return (
     <div className="glass rounded-3xl p-6 mb-4">
@@ -15,9 +17,28 @@ export default function CoreProfileSection({ report }) {
         </div>
         <h3 className="text-base font-bold text-text-primary">核心画像</h3>
       </div>
-      <div className="report-content">
-        <Markdown>{section}</Markdown>
-      </div>
+
+      {subs.length > 1 ? (
+        <div className="space-y-3">
+          {subs.map((sub, i) => {
+            return (
+              <div key={i} className="rounded-xl p-4 bg-bg-dark/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="w-2 h-2 rounded-full bg-primary" />
+                  <h4 className="text-sm font-semibold text-text-primary">{sub.title}</h4>
+                </div>
+                <div className="report-content text-sm">
+                  <Markdown>{sub.content}</Markdown>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="report-content">
+          <Markdown>{section}</Markdown>
+        </div>
+      )}
     </div>
   );
 }
@@ -27,4 +48,50 @@ function extractSection(markdown, heading) {
   const regex = new RegExp(`##\\s*${heading}([\\s\\S]*?)(?=##\\s|$)`);
   const match = markdown.match(regex);
   return match ? match[1].trim() : null;
+}
+
+/**
+ * Split by standalone bold headings (**Title**) or ### headings.
+ * Lines like **ItemTitle**：description are kept as content, not section breaks.
+ */
+function splitByStandaloneBold(markdown) {
+  if (!markdown) return [];
+
+  const lines = markdown.split('\n');
+  const sections = [];
+  let currentTitle = '';
+  let contentLines = [];
+
+  const flush = () => {
+    const content = contentLines.join('\n').trim();
+    if (currentTitle || content) {
+      sections.push({ title: currentTitle, content });
+    }
+    currentTitle = '';
+    contentLines = [];
+  };
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    const h3 = trimmed.match(/^###\s+(.+)/);
+    if (h3) {
+      flush();
+      currentTitle = h3[1].replace(/\*\*/g, '');
+      continue;
+    }
+
+    // Standalone bold: **Title** with no text after (optionally ：)
+    const standalone = trimmed.match(/^\*\*([^*]+)\*\*\s*[：:]?\s*$/);
+    if (standalone) {
+      flush();
+      currentTitle = standalone[1];
+      continue;
+    }
+
+    contentLines.push(line);
+  }
+
+  flush();
+  return sections;
 }

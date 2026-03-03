@@ -54,10 +54,10 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob }) {
     );
   }
 
-  const tabs = [
-    { key: 'test', label: '测评结果' },
-    { key: 'report', label: '深度报告' },
-  ];
+  const hasReport = !!record.report;
+  const tabs = hasReport
+    ? [{ key: 'test', label: '测评结果' }, { key: 'report', label: '深度报告' }]
+    : [{ key: 'test', label: '测评结果' }];
 
   return (
     <div className="min-h-screen flex flex-col bg-bg-dark pb-8">

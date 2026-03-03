@@ -72,7 +72,14 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
                   <p className="text-xs text-text-secondary/60 line-clamp-1">
                     {record.report ? '已生成报告' : '仅测评结果'}
                   </p>
-                  <span className="text-xs text-primary">查看报告 →</span>
+                  <div className="flex items-center gap-2">
+                    {record.resumeSkipped && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-text-secondary/10 text-text-secondary">
+                        未上传简历
+                      </span>
+                    )}
+                    <span className="text-xs text-primary">查看详情 →</span>
+                  </div>
                 </div>
               </button>
             ))}

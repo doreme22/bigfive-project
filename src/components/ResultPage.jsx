@@ -14,10 +14,10 @@ export default function ResultPage({
   onSelectJob,
   onBack,
 }) {
-  const tabs = [
-    { key: 'test', label: '测评结果' },
-    { key: 'report', label: '深度报告' },
-  ];
+  const hasReport = !!report;
+  const tabs = hasReport
+    ? [{ key: 'test', label: '测评结果' }, { key: 'report', label: '深度报告' }]
+    : [{ key: 'test', label: '测评结果' }];
 
   const [activeTab, setActiveTab] = useState('test');
 

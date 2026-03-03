@@ -8,7 +8,7 @@ import {
   Legend,
   Tooltip,
 } from 'recharts';
-import { dimensionNames, dimensionColors, norms } from '../data/questions';
+import { dimensionNames, norms } from '../data/questions';
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
@@ -83,10 +83,7 @@ export default function RadarChartComponent({ scores }) {
           const diff = (scores[dim] || 0) - norms[dim];
           return (
             <div key={dim} className="text-center">
-              <div
-                className="text-lg font-bold"
-                style={{ color: dimensionColors[dim] }}
-              >
+              <div className="text-lg font-bold text-primary">
                 {(scores[dim] || 0).toFixed(1)}
               </div>
               <div className="text-[10px] text-text-secondary mt-0.5">

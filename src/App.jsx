@@ -242,10 +242,25 @@ export default function App() {
         type: 'SET_DISPLAYED_JOBS',
         payload: { jobs: picked, excludedIds: picked.map((j) => j.id) },
       });
+
+      // Save to history (without resume/report)
+      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType);
+      addHistoryRecord({
+        assessmentType: state.assessmentType || 'bfi',
+        bfiScores: state.bfiScores,
+        mbtiType: state.mbtiType,
+        jungScores: state.jungScores,
+        personalityTag,
+        resumeText: '',
+        report: '',
+        jobTypeRecs: [],
+        growthSuggestions: [],
+        resumeSkipped: true,
+      });
     }
 
     dispatch({ type: 'SHOW_RESULT' });
-  }, [state.bfiScores, state.jungScores, state.mbtiType]);
+  }, [state.bfiScores, state.jungScores, state.mbtiType, state.assessmentType]);
 
   const handleRefreshJobs = useCallback(() => {
     const effectiveScores = mergePersonalityData(state.bfiScores, state.jungScores, state.mbtiType);

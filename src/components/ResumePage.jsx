@@ -173,9 +173,6 @@ export default function ResumePage({ onSubmit, onSkip }) {
           className="w-full h-48 bg-bg-card border border-border rounded-2xl p-4 text-sm text-text-primary placeholder-text-secondary/50 resize-none focus:outline-none focus:border-primary/50 transition-colors"
         />
 
-        <p className="text-xs text-text-secondary/50 mt-2 text-center">
-          简历将被缓存以便下次复用
-        </p>
       </div>
 
       {/* Buttons */}

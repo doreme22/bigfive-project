@@ -1,5 +1,5 @@
 import RadarChartComponent from '../RadarChart';
-import { dimensionNames, dimensionColors, norms } from '../../data/questions';
+import { dimensionNames, norms } from '../../data/questions';
 
 function ScoreBar({ dim, score }) {
   const norm = norms[dim];
@@ -9,18 +9,15 @@ function ScoreBar({ dim, score }) {
   return (
     <div className="mb-4">
       <div className="flex justify-between items-center mb-1.5">
-        <span className="text-sm font-medium" style={{ color: dimensionColors[dim] }}>
+        <span className="text-sm font-medium text-text-primary">
           {dimensionNames[dim]}
         </span>
         <span className="text-sm font-semibold text-text-primary">{score.toFixed(2)}</span>
       </div>
       <div className="relative h-2.5 bg-bg-dark rounded-full overflow-hidden">
         <div
-          className="h-full rounded-full transition-all duration-1000 ease-out"
-          style={{
-            width: `${pct}%`,
-            background: `linear-gradient(90deg, ${dimensionColors[dim]}80, ${dimensionColors[dim]})`,
-          }}
+          className="h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-primary/50 to-primary"
+          style={{ width: `${pct}%` }}
         />
         <div
           className="absolute top-0 h-full w-0.5 bg-[#1a2e23]/40"
@@ -72,8 +69,8 @@ export default function TestResultsTab({ scores }) {
         {Object.entries(dimensionDescriptions).map(([dim, desc]) => (
           <div key={dim} className="glass rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: dimensionColors[dim] }} />
-              <span className="text-sm font-semibold" style={{ color: dimensionColors[dim] }}>
+              <span className="w-2 h-2 rounded-full bg-primary" />
+              <span className="text-sm font-semibold text-text-primary">
                 {dimensionNames[dim]}
               </span>
             </div>
