@@ -82,6 +82,16 @@ function reducer(state, action) {
         answers: action.payload.answers,
       };
 
+    case 'RESTORE_TO_RESUME':
+      return {
+        ...state,
+        stage: STAGE.RESUME,
+        assessmentType: 'bfi',
+        shuffled: action.payload.shuffled,
+        answers: action.payload.answers,
+        bfiScores: action.payload.bfiScores,
+      };
+
     case 'ANSWER_QUESTION': {
       const newAnswers = { ...state.answers, [action.payload.questionId]: action.payload.value };
       if (state.currentIndex < state.shuffled.length - 1) {
@@ -153,7 +163,7 @@ export default function App() {
 
   // Save quiz progress on every answer
   useEffect(() => {
-    if (state.stage === STAGE.QUIZ && state.shuffled.length > 0) {
+    if ((state.stage === STAGE.QUIZ || state.stage === STAGE.RESUME) && state.shuffled.length > 0) {
       const shuffledIds = state.shuffled.map((q) => q.id);
       saveQuizProgress(shuffledIds, state.currentIndex, state.answers);
     }
@@ -290,14 +300,25 @@ export default function App() {
     const idMap = {};
     questions.forEach((q) => { idMap[q.id] = q; });
     const shuffled = progress.shuffledIds.map((id) => idMap[id]).filter(Boolean);
-    dispatch({
-      type: 'RESTORE_PROGRESS',
-      payload: {
-        shuffled,
-        currentIndex: progress.currentIndex,
-        answers: progress.answers,
-      },
-    });
+
+    // If all questions answered, go directly to resume stage
+    const allAnswered = shuffled.length > 0 && Object.keys(progress.answers).length >= shuffled.length;
+    if (allAnswered) {
+      const bfiScores = calculateScores(progress.answers, questions);
+      dispatch({
+        type: 'RESTORE_TO_RESUME',
+        payload: { shuffled, answers: progress.answers, bfiScores },
+      });
+    } else {
+      dispatch({
+        type: 'RESTORE_PROGRESS',
+        payload: {
+          shuffled,
+          currentIndex: progress.currentIndex,
+          answers: progress.answers,
+        },
+      });
+    }
   }, []);
 
   const effectiveScores = mergePersonalityData(state.bfiScores, state.jungScores, state.mbtiType);

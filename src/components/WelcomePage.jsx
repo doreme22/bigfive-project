@@ -36,6 +36,8 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
   };
 
   const answeredCount = savedProgress ? Object.keys(savedProgress.answers || {}).length : 0;
+  const totalCount = savedProgress ? (savedProgress.shuffledIds || []).length : 44;
+  const allAnswered = answeredCount >= totalCount && totalCount > 0;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
@@ -135,14 +137,20 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
       {/* Progress restore modal */}
       {showRestoreModal && (
         <ModalOverlay
-          title="检测到未完成的测评"
+          title={allAnswered ? '检测到已完成的测评' : '检测到未完成的测评'}
           onConfirm={handleRestore}
           onCancel={handleDiscardProgress}
-          confirmText="继续答题"
+          confirmText={allAnswered ? '继续上传简历' : '继续答题'}
           cancelText="重新开始"
         >
-          <p>上次测评未完成，已完成 {answeredCount}/44 题。</p>
-          <p className="mt-1">是否继续上次的进度？</p>
+          {allAnswered ? (
+            <p>上次测评已完成答题，还未上传简历生成报告。是否继续？</p>
+          ) : (
+            <>
+              <p>上次测评未完成，已完成 {answeredCount}/{totalCount} 题。</p>
+              <p className="mt-1">是否继续上次的进度？</p>
+            </>
+          )}
         </ModalOverlay>
       )}
     </div>

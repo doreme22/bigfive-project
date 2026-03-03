@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { getCachedResume, setCachedResume } from '../utils/storage';
-import ModalOverlay from './ui/ModalOverlay';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.mjs',
@@ -26,28 +25,16 @@ export default function ResumePage({ onSubmit, onSkip }) {
   const [fileName, setFileName] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const [parsing, setParsing] = useState(false);
-  const [showCacheModal, setShowCacheModal] = useState(false);
-  const [cachedResume, setCachedResumeState] = useState(null);
   const fileInputRef = useRef(null);
 
-  // Check for cached resume on mount
+  // Auto-fill from cache on mount (no modal)
   useEffect(() => {
     const cached = getCachedResume();
     if (cached && cached.text) {
-      setCachedResumeState(cached);
-      setShowCacheModal(true);
+      setResumeText(cached.text);
+      if (cached.source) setFileName(cached.source);
     }
   }, []);
-
-  const handleUseCached = () => {
-    setResumeText(cachedResume.text);
-    if (cachedResume.source) setFileName(cachedResume.source);
-    setShowCacheModal(false);
-  };
-
-  const handleDiscardCache = () => {
-    setShowCacheModal(false);
-  };
 
   const handleFileChange = async (file) => {
     if (!file) return;
@@ -83,7 +70,6 @@ export default function ResumePage({ onSubmit, onSkip }) {
   };
 
   const handleSubmit = () => {
-    // Cache the new resume
     setCachedResume(resumeText, fileName || 'manual_input');
     onSubmit(resumeText);
   };
@@ -122,7 +108,7 @@ export default function ResumePage({ onSubmit, onSkip }) {
             type="file"
             accept=".txt,.md,.doc,.docx,.pdf"
             className="hidden"
-            onChange={(e) => handleFileChange(e.target.files[0])}
+            onChange={(e) => { handleFileChange(e.target.files[0]); e.target.value = ''; }}
           />
           {parsing ? (
             <div className="flex items-center justify-center gap-2">
@@ -134,18 +120,11 @@ export default function ResumePage({ onSubmit, onSkip }) {
             </div>
           ) : fileName ? (
             <div className="flex items-center justify-center gap-2">
-              <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-sm text-green-400">{fileName}</span>
-              <button
-                onClick={(e) => { e.stopPropagation(); setFileName(''); setResumeText(''); }}
-                className="text-text-secondary ml-2"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <span className="text-sm text-primary">{fileName}</span>
+              <span className="text-[10px] text-text-secondary/50 ml-1">点击重新上传</span>
             </div>
           ) : (
             <>
@@ -195,20 +174,6 @@ export default function ResumePage({ onSubmit, onSkip }) {
           跳过，仅查看测评结果
         </button>
       </div>
-
-      {/* Resume cache modal */}
-      {showCacheModal && (
-        <ModalOverlay
-          title="检测到之前的简历"
-          onConfirm={handleUseCached}
-          onCancel={handleDiscardCache}
-          confirmText="使用"
-          cancelText="重新上传"
-        >
-          <p>上次上传的简历仍在缓存中{cachedResume.source ? `（来源：${cachedResume.source}）` : ''}。</p>
-          <p className="mt-1">是否直接使用？</p>
-        </ModalOverlay>
-      )}
     </div>
   );
 }
