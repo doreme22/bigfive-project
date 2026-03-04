@@ -16,11 +16,17 @@ export default function ResultPage({
   onBack,
 }) {
   const hasReport = !!report;
-  const tabs = hasReport
-    ? [{ key: 'test', label: '测评结果' }, { key: 'report', label: '深度报告' }]
-    : [{ key: 'test', label: '测评结果' }];
+  const isManual = assessmentType === 'manual';
 
-  const [activeTab, setActiveTab] = useState('test');
+  // Manual input: only deep report tab (no BFI scores to show)
+  // BFI / both: test results tab + optional deep report tab
+  const tabs = isManual
+    ? [{ key: 'report', label: '深度报告' }]
+    : hasReport
+      ? [{ key: 'test', label: '测评结果' }, { key: 'report', label: '深度报告' }]
+      : [{ key: 'test', label: '测评结果' }];
+
+  const [activeTab, setActiveTab] = useState(isManual ? 'report' : 'test');
 
   // Personality tag display
   const tagParts = [];
@@ -67,7 +73,7 @@ export default function ResultPage({
 
       {/* Content */}
       <div className="px-6 mt-4">
-        {activeTab === 'test' && (
+        {activeTab === 'test' && scores && (
           <>
             <TestResultsTab scores={scores} />
 
@@ -87,7 +93,7 @@ export default function ResultPage({
           </>
         )}
 
-        {activeTab === 'report' && (
+        {activeTab === 'report' && hasReport && (
           <DeepReportTab
             report={report}
             growthSuggestions={growthSuggestions}
@@ -95,6 +101,25 @@ export default function ResultPage({
             onRefreshJobs={onRefreshJobs}
             onSelectJob={onSelectJob}
           />
+        )}
+
+        {/* Manual input with report generation failed */}
+        {activeTab === 'report' && !hasReport && isManual && (
+          <div className="animate-fade-in glass rounded-3xl p-6 text-center">
+            <svg className="w-12 h-12 text-text-secondary/40 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <p className="text-sm font-semibold text-text-primary mb-1">报告生成失败</p>
+            <p className="text-xs text-text-secondary mb-4">AI 报告未能成功生成，请重新上传简历重试</p>
+            {onGoResume && (
+              <button
+                onClick={onGoResume}
+                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white font-semibold text-sm shadow-lg shadow-primary/25 active:scale-[0.98] transition-all"
+              >
+                重新上传简历
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>

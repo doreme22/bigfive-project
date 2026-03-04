@@ -410,7 +410,7 @@ export default function App() {
       {state.stage === STAGE.RESUME && (
         <ResumePage
           onSubmit={handleResumeSubmit}
-          onSkip={handleSkip}
+          onSkip={state.assessmentType !== 'manual' ? handleSkip : null}
         />
       )}
 
@@ -418,7 +418,7 @@ export default function App() {
         <LoadingPage />
       )}
 
-      {state.stage === STAGE.RESULT && effectiveScores && (
+      {state.stage === STAGE.RESULT && (effectiveScores || state.assessmentType === 'manual') && (
         <ResultPage
           scores={effectiveScores}
           mbtiType={state.mbtiType}

@@ -95,7 +95,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
 
         {/* Hint */}
         <p className="text-xs text-text-secondary/50 text-center mt-4">
-          选择一种输入方式，将用于近似推算你的性格画像
+          选择一种输入方式，将结合简历生成 AI 深度报告
         </p>
       </div>
 

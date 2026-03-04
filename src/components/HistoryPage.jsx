@@ -79,7 +79,7 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
                 )}
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-text-secondary/60 line-clamp-1">
-                    {record.report ? '已生成报告' : '仅测评结果'}
+                    {record.report ? '已生成报告' : record.assessmentType === 'manual' ? '报告生成失败' : '仅测评结果'}
                   </p>
                   <div className="flex items-center gap-2">
                     {record.resumeSkipped && (

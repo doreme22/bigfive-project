@@ -167,12 +167,14 @@ export default function ResumePage({ onSubmit, onSkip }) {
         >
           生成 AI 分析报告
         </button>
-        <button
-          onClick={onSkip}
-          className="w-full py-3 rounded-2xl text-text-secondary text-sm active:bg-bg-card transition-colors"
-        >
-          跳过，仅查看测评结果
-        </button>
+        {onSkip && (
+          <button
+            onClick={onSkip}
+            className="w-full py-3 rounded-2xl text-text-secondary text-sm active:bg-bg-card transition-colors"
+          >
+            跳过，仅查看测评结果
+          </button>
+        )}
       </div>
     </div>
   );

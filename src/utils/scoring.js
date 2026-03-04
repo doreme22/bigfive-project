@@ -70,17 +70,26 @@ export function buildPrompt(scores, resume) {
  * 构建深度报告 prompt — 结构化四大块
  */
 export function buildDeepReportPrompt(scores, jungScores, mbtiType, resume) {
-  const scoresStr = Object.entries(scores)
-    .map(([dim, val]) => `${dimensionNames[dim]}(${dim}): ${val}`)
-    .join(', ');
+  let personalityContext = '';
 
-  const normsStr = Object.entries(norms)
-    .map(([dim, val]) => `${dimensionNames[dim]}: ${val}`)
-    .join(', ');
+  if (scores) {
+    const scoresStr = Object.entries(scores)
+      .map(([dim, val]) => `${dimensionNames[dim]}(${dim}): ${val}`)
+      .join(', ');
+    const normsStr = Object.entries(norms)
+      .map(([dim, val]) => `${dimensionNames[dim]}: ${val}`)
+      .join(', ');
+    personalityContext += `BFI-44 测评均分: {${scoresStr}}（常模参考：{${normsStr}}）`;
+  }
 
-  let personalityContext = `BFI-44 测评均分: {${scoresStr}}（常模参考：{${normsStr}}）`;
-  if (mbtiType) personalityContext += `\nMBTI 类型: ${mbtiType}`;
-  if (jungScores) personalityContext += `\n荣格八维认知功能: ${JSON.stringify(jungScores)}`;
+  if (mbtiType) {
+    if (personalityContext) personalityContext += '\n';
+    personalityContext += `MBTI 类型: ${mbtiType}`;
+  }
+  if (jungScores) {
+    if (personalityContext) personalityContext += '\n';
+    personalityContext += `荣格八维认知功能: ${JSON.stringify(jungScores)}`;
+  }
 
   return `角色定位：你是一位精通心理学和职业规划的顶级专家。
 
@@ -112,11 +121,23 @@ ${personalityContext}
  * 构建岗位类型推荐 prompt
  */
 export function buildJobRecommendationPrompt(scores, jungScores, resume) {
-  const scoresStr = Object.entries(scores)
-    .map(([dim, val]) => `${dimensionNames[dim]}(${dim}): ${val}`)
-    .join(', ');
+  let dataStr = '';
+  if (scores) {
+    const scoresStr = Object.entries(scores)
+      .map(([dim, val]) => `${dimensionNames[dim]}(${dim}): ${val}`)
+      .join(', ');
+    dataStr += `BFI 性格数据: {${scoresStr}}`;
+  }
+  if (jungScores) {
+    if (dataStr) dataStr += '，';
+    dataStr += `荣格八维: ${JSON.stringify(jungScores)}`;
+  }
+  if (resume) {
+    if (dataStr) dataStr += '，';
+    dataStr += `简历摘要: ${resume.slice(0, 500)}`;
+  }
 
-  return `基于用户的性格数据 {${scoresStr}}${jungScores ? `，荣格八维: ${JSON.stringify(jungScores)}` : ''}${resume ? `，简历摘要: ${resume.slice(0, 500)}` : ''}
+  return `基于用户的${dataStr}
 
 请推荐 2-3 个最适合的岗位类型方向。严格按以下 JSON 格式返回，不要包含其他文字：
 [{"type": "岗位类型名称", "reason": "30字以内的推荐理由", "tags": ["标签1", "标签2"]}]`;
@@ -126,11 +147,23 @@ export function buildJobRecommendationPrompt(scores, jungScores, resume) {
  * 构建成长建议 prompt
  */
 export function buildGrowthPrompt(scores, jungScores, resume) {
-  const scoresStr = Object.entries(scores)
-    .map(([dim, val]) => `${dimensionNames[dim]}(${dim}): ${val}`)
-    .join(', ');
+  let dataStr = '';
+  if (scores) {
+    const scoresStr = Object.entries(scores)
+      .map(([dim, val]) => `${dimensionNames[dim]}(${dim}): ${val}`)
+      .join(', ');
+    dataStr += `BFI 性格数据: {${scoresStr}}`;
+  }
+  if (jungScores) {
+    if (dataStr) dataStr += '，';
+    dataStr += `荣格八维: ${JSON.stringify(jungScores)}`;
+  }
+  if (resume) {
+    if (dataStr) dataStr += '，';
+    dataStr += `简历摘要: ${resume.slice(0, 500)}`;
+  }
 
-  return `基于用户的性格数据 {${scoresStr}}${jungScores ? `，荣格八维: ${JSON.stringify(jungScores)}` : ''}${resume ? `，简历摘要: ${resume.slice(0, 500)}` : ''}
+  return `基于用户的${dataStr}
 
 请给出 3 条最关键的个人成长建议。严格按以下 JSON 格式返回，不要包含其他文字：
 [{"title": "建议标题(5字以内)", "description": "50字以内的具体建议", "tags": ["相关标签1", "相关标签2"]}]`;

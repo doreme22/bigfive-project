@@ -13,7 +13,7 @@ export async function generateReport(scores, jungScores, mbtiType, resume, onStr
   const prompt = buildDeepReportPrompt(scores, jungScores, mbtiType, resume);
 
   if (!API_CONFIG.apiKey) {
-    return generateMockReport(scores, resume, onStream);
+    return generateMockReport(scores, jungScores, mbtiType, resume, onStream);
   }
 
   const response = await fetch(`${API_CONFIG.baseUrl}/chat/completions`, {
@@ -151,6 +151,14 @@ export async function generateGrowthSuggestions(scores, jungScores, resume) {
 // --- Mock generators ---
 
 function generateMockJobTypeRecs(scores) {
+  if (!scores) {
+    return [
+      { type: '产品管理/战略咨询', reason: '适合需要创新与沟通兼具的综合型人才', tags: ['创新', '沟通', '策略'] },
+      { type: '研究分析/UX设计', reason: '适合需要深度思考和创造力的工作', tags: ['研究', '创新', '设计'] },
+      { type: '业务拓展/活动策划', reason: '灵活适应的特质适合多变的业务环境', tags: ['灵活', '社交', '创意'] },
+    ];
+  }
+
   const { E, A, C, N, O } = scores;
   const recs = [];
 
@@ -176,6 +184,14 @@ function generateMockJobTypeRecs(scores) {
 }
 
 function generateMockGrowthSuggestions(scores) {
+  if (!scores) {
+    return [
+      { title: '自我觉察', description: '定期回顾自己的决策模式和情绪反应，建立自我认知的习惯。', tags: ['自我认知', '成长'] },
+      { title: '跨界学习', description: '每月接触一个新领域的知识，保持认知弹性和创新思维。', tags: ['学习', '创新'] },
+      { title: '关系经营', description: '主动维护职场人际关系，每周与一位同事或朋友进行有质量的交流。', tags: ['社交', '人际关系'] },
+    ];
+  }
+
   const { E, A, C, N, O } = scores;
   const suggestions = [];
 
@@ -234,7 +250,12 @@ function generateMockGrowthSuggestions(scores) {
 /**
  * Mock 深度报告生成（结构化四大块）
  */
-async function generateMockReport(scores, resume, onStream) {
+async function generateMockReport(scores, jungScores, mbtiType, resume, onStream) {
+  // For manual input without BFI scores, generate a generic report based on MBTI/Jung
+  if (!scores) {
+    return generateMockManualReport(jungScores, mbtiType, resume, onStream);
+  }
+
   const { E, A, C, N, O } = scores;
   const highE = E > 3.10, highA = A > 3.75, highC = C > 3.36, highN = N > 3.05, highO = O > 3.69;
 
@@ -326,6 +347,69 @@ ${growthItems.slice(0, 3).join('\n\n')}
 ## 寄语
 
 > *「${quote}」*`;
+
+  // Simulate streaming
+  const chars = report.split('');
+  let current = '';
+  for (let i = 0; i < chars.length; i++) {
+    current += chars[i];
+    if (i % 3 === 0) {
+      onStream?.(current);
+      await new Promise((r) => setTimeout(r, 5));
+    }
+  }
+  onStream?.(report);
+  return report;
+}
+
+/**
+ * Mock 深度报告 — 手动输入 MBTI/荣格模式（无 BFI 分数）
+ */
+async function generateMockManualReport(jungScores, mbtiType, resume, onStream) {
+  const typeLabel = mbtiType || '未指定 MBTI 类型';
+
+  const report = `## 核心画像
+
+**核心优势**
+
+**自我认知先行者**：你已经主动探索了自己的人格类型（${typeLabel}），这本身说明你对自我认知有高度敏感性和主动性。
+
+**跨框架思维者**：你在尝试理解自己的过程中不满足于单一维度的标签，而是愿意从多角度审视自我，这是一种难得的认知复杂性。
+
+**潜在短板**
+
+**分析过度的陷阱**：过于关注人格类型分类可能导致"标签化思维"，用理论框架限制而非解放自己的行为选择。
+
+**行动延迟风险**：在充分了解自己之前不愿行动，可能错过需要"边做边学"的机会。
+
+**内在张力**
+
+你对自我认知的渴望与真实世界的复杂性之间存在张力——人格理论是有用的地图，但地图永远不等于疆域本身。学会在"大致正确"的自我认知基础上果断行动，是你的核心成长课题。
+
+## 最佳战场
+
+**适合的公司类型**：重视个人发展和学习文化的组织——知识密集型行业的成长型公司，或鼓励员工自我探索的创新团队
+
+**适合的团队角色**：团队中的"翻译者"和"连接者"——你对人的敏感度让你能理解不同性格成员的需求，在团队中起到桥梁作用
+
+**理想搭档画像**：你需要一个**行动力强的搭档**帮你把洞察转化为成果，以及一个**开放包容的上级**给你探索空间
+
+**最适合的岗位类型**：人才发展/组织发展、用户研究/产品策略、咨询/教练
+
+## 成长引擎
+
+### 从认知到行动
+给自己设定一个"72小时规则"：任何新的自我洞察，必须在72小时内转化为一个具体的小行动。认知只有通过行为验证，才能真正内化。
+
+### 建立反馈循环
+主动向信任的同事和朋友征求反馈："你觉得我在什么情况下表现最好？"外部视角能帮你校准自我认知的盲区。
+
+### 拥抱不确定性
+练习在"不完全了解自己"的状态下做决策。完美的自我认知是不存在的，但足够好的行动在每一刻都是可能的。
+
+## 寄语
+
+> *「了解自己是一场终身旅程，而非一个终点。最好的自我认知不是来自测评，而是来自你在真实世界中的每一次选择和反馈。」*`;
 
   // Simulate streaming
   const chars = report.split('');
