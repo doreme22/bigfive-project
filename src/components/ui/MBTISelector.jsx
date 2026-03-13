@@ -31,7 +31,7 @@ export default function MBTISelector({ value, onChange }) {
                   onClick={() => handleSelect(i, letter)}
                   className={`flex-1 py-3 rounded-xl text-sm font-medium transition-all ${
                     isSelected
-                      ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                      ? 'bg-primary text-white'
                       : 'bg-bg-card text-text-secondary border border-border active:bg-bg-card-hover'
                   }`}
                 >

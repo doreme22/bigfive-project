@@ -36,7 +36,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg-dark">
+    <div className="min-h-screen flex flex-col bg-[#FBFBFB]">
       <PageHeader title="输入人格数据" onBack={onBack} />
 
       <div className="flex-1 px-6 pb-8 overflow-y-auto">
@@ -46,7 +46,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
             onClick={() => setMode(MODE_MBTI)}
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all ${
               mode === MODE_MBTI
-                ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                ? 'bg-primary text-white'
                 : 'bg-bg-card text-text-secondary border border-border'
             }`}
           >
@@ -57,7 +57,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
             onClick={() => setMode(MODE_JUNG)}
             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all ${
               mode === MODE_JUNG
-                ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                ? 'bg-primary text-white'
                 : 'bg-bg-card text-text-secondary border border-border'
             }`}
           >

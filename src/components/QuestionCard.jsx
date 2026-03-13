@@ -99,16 +99,19 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
 
           {/* Prev / Next navigation — outside animated wrapper */}
           <div className="mt-10 flex items-center justify-between">
-            <button
-              onClick={handleBack}
-              disabled={index === 0}
-              className={`flex items-center gap-1 ${index === 0 ? 'opacity-30' : ''}`}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="scale-y-[-1]">
-                <path d="M10 4L6 8L10 12" stroke="#7b838d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span className="text-[14px] text-[#7b838d] leading-[21px]">上一题</span>
-            </button>
+            {index > 0 ? (
+              <button
+                onClick={handleBack}
+                className="flex items-center gap-1"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="scale-y-[-1]">
+                  <path d="M10 4L6 8L10 12" stroke="#7b838d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span className="text-[14px] text-[#7b838d] leading-[21px]">上一题</span>
+              </button>
+            ) : (
+              <div />
+            )}
             <button
               onClick={() => {
                 if (selected) handleSelect(selected);
