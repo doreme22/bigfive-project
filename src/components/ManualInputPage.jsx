@@ -5,7 +5,7 @@ import JungSlider from './ui/JungSlider';
 
 const jungFunctions = ['Ti', 'Te', 'Fi', 'Fe', 'Ni', 'Ne', 'Si', 'Se'];
 
-const defaultJung = { Ti: 50, Te: 50, Fi: 50, Fe: 50, Ni: 50, Ne: 50, Si: 50, Se: 50 };
+const defaultJung = { Ti: 0, Te: 0, Fi: 0, Fe: 0, Ni: 0, Ne: 0, Si: 0, Se: 0 };
 
 const MODE_MBTI = 'mbti';
 const MODE_JUNG = 'jung';
