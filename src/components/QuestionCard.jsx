@@ -38,15 +38,6 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
 
   return (
     <div className="welcome-page relative min-h-[100dvh]">
-      {/* Background pattern */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <img
-          src="/images/home-bg-pattern.svg"
-          alt=""
-          className="absolute top-[-286px] left-[-41px] w-[851px] h-[1334px] opacity-80"
-        />
-      </div>
-
       {/* Decorative illustration */}
       <div
         className="absolute z-[1] pointer-events-none"
@@ -58,13 +49,14 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
       {/* Content */}
       <div className="relative z-10">
         {/* Navigation bar */}
-        <div className="safe-top flex items-center justify-center px-4 pb-2 relative">
-          <button onClick={() => setShowExitModal(true)} className="absolute left-4 bottom-2 w-10 h-10 flex items-center justify-center">
+        <div className="safe-top flex items-center justify-between px-4 pb-2">
+          <button onClick={() => setShowExitModal(true)} className="w-10 h-10 -ml-2 flex items-center justify-center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M15 19L8 12L15 5" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
           <span className="text-[16px] font-medium text-black">职场性格测试</span>
+          <div className="w-10 h-10" />
         </div>
 
         {/* Progress section */}
