@@ -68,7 +68,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
           </p>
           <div className="mt-2 w-[194px] h-[6px] bg-white rounded-full overflow-hidden">
             <div
-              className="h-full rounded-full transition-all duration-500 ease-out bg-[#00674d]"
+              className="h-full rounded-full transition-all duration-500 ease-out bg-[#009688]"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -99,7 +99,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
                     disabled={animating}
                     className={`w-full flex gap-3 items-start p-5 rounded-[4px] text-left transition-all duration-200 ${
                       isSelected
-                        ? 'bg-[#00674d]/10 ring-1 ring-[#00674d]'
+                        ? 'bg-[#EBFAF5] ring-1 ring-[#009688]'
                         : 'bg-[#f8fafc] active:bg-[#f0f2f4]'
                     }`}
                   >
