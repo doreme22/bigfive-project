@@ -14,17 +14,18 @@ export default function ManualInputPage({ onSubmit, onBack }) {
   const [mode, setMode] = useState(MODE_MBTI);
   const [mbtiSelections, setMbtiSelections] = useState({});
   const [jungScores, setJungScores] = useState(defaultJung);
-  const [jungTouched, setJungTouched] = useState(false);
+
 
   const mbtiString = Object.keys(mbtiSelections).length === 4
     ? [mbtiSelections[0], mbtiSelections[1], mbtiSelections[2], mbtiSelections[3]].join('')
     : null;
 
-  const canSubmit = mode === MODE_MBTI ? mbtiString !== null : jungTouched;
+  const jungAllNonZero = jungFunctions.every((fn) => jungScores[fn] > 0);
+  const canSubmit = mode === MODE_MBTI ? mbtiString !== null : jungAllNonZero;
 
   const handleJungChange = (fn, val) => {
     setJungScores((prev) => ({ ...prev, [fn]: val }));
-    setJungTouched(true);
+
   };
 
   const handleSubmit = () => {
