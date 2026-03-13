@@ -12,7 +12,7 @@ function loadInitialProgress() {
 
 /*
  * Label positions relative to the illustration image (339×401).
- * Figma: page=375×812, illustration at left=37 top=378 w=339 h=401
+ * Figma: illustration at left=37 top=378 w=339 h=401
  * left = (figma_label_left - 37) / 339
  * top  = (figma_label_top  - 378) / 401
  */
@@ -44,81 +44,94 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
   const allAnswered = answeredCount >= totalCount && totalCount > 0;
 
   return (
-    <div className="welcome-page relative h-[100dvh] flex flex-col overflow-hidden">
-      {/* Background decorative pattern */}
+    <div className="welcome-page relative h-[100dvh] overflow-hidden">
+      {/* ---- Layer 0: Background decorative pattern ---- */}
       <img
         src="/images/home-bg-pattern.svg"
         alt=""
-        className="absolute top-[-286px] left-[-41px] w-[724px] h-[1314px] opacity-80 pointer-events-none"
+        className="absolute top-[-286px] left-[-41px] w-[724px] h-[1314px] opacity-80 pointer-events-none z-0"
       />
 
-      {/* Top navigation bar */}
-      <div className="safe-top relative z-10 shrink-0 flex items-center justify-between px-4 pb-2">
-        <button onClick={onBack} className="w-10 h-10 -ml-2 flex items-center justify-center">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M15 19L8 12L15 5" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-        <button onClick={onGoHistory} className="w-10 h-10 -mr-2 flex items-center justify-center">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M10 4.16667V10L13.3333 11.6667" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <circle cx="10" cy="10" r="7.5" stroke="black" strokeWidth="1.5"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* Title */}
-      <div className="relative z-10 shrink-0 px-4 mt-5">
-        <p className="text-[28px] leading-normal text-black font-normal">测测你的</p>
-        <p className="text-[32px] leading-normal text-black font-semibold">职场</p>
-        <p className="text-[32px] leading-normal text-black font-semibold inline-flex items-end gap-1">
-          性格密码
-          <img src="/images/home-search-icon.svg" alt="" className="w-[13px] h-[13px] mb-[6px]" />
-        </p>
-      </div>
-
-      {/* Subtitle */}
-      <div className="relative z-10 shrink-0 px-4 mt-2">
-        <p className="text-[13px] leading-normal text-[#656d76]">基于BFI-44量表 + AI深度解析</p>
-      </div>
-
-      {/* Feature list */}
-      <div className="relative z-10 shrink-0 px-4 mt-8 flex flex-col gap-4">
-        {[
-          '44道经典题目，科学测评',
-          '五维雷达图 + 常模对比',
-          'AI深度分析 + 岗位推荐',
-        ].map((text) => (
-          <div key={text} className="flex items-center gap-2">
-            <img src="/images/home-feature-icon.svg" alt="" className="w-[18px] h-[18px] flex-shrink-0" />
-            <span className="text-[14px] leading-[21px] text-black">{text}</span>
+      {/* ---- Layer 1: Illustration + labels (decorative, absolute positioned) ---- */}
+      {/* Anchored from bottom; on short screens the top clips naturally via overflow-hidden */}
+      <div
+        className="absolute z-[1] pointer-events-none"
+        style={{
+          left: '9.87%',
+          width: '90.4%',
+          aspectRatio: '339 / 401',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 4%)',
+        }}
+      >
+        <img
+          src="/images/home-illustration.svg"
+          alt=""
+          className="w-full h-full"
+        />
+        {dimensionLabels.map(({ text, left, top }) => (
+          <div
+            key={text}
+            className="absolute flex flex-col items-center gap-1"
+            style={{ left, top }}
+          >
+            <span className="text-[14px] leading-[21px] text-[#98cebd] whitespace-nowrap">{text}</span>
+            <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
           </div>
         ))}
       </div>
 
-      {/* Illustration area — flex-1 absorbs remaining height, illustration scales to fit */}
-      <div className="flex-1 min-h-0 relative z-[5]" style={{ paddingLeft: '9.87%' }}>
-        <div className="relative h-full" style={{ aspectRatio: '339 / 401' }}>
-          <img
-            src="/images/home-illustration.svg"
-            alt=""
-            className="w-full h-full pointer-events-none"
-          />
-          {dimensionLabels.map(({ text, left, top }) => (
-            <div
-              key={text}
-              className="absolute flex flex-col items-center gap-1"
-              style={{ left, top }}
-            >
-              <span className="text-[14px] leading-[21px] text-[#98cebd] whitespace-nowrap">{text}</span>
-              <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
+      {/* ---- Layer 2: Top content (normal flow) ---- */}
+      <div className="relative z-10">
+        {/* Navigation bar */}
+        <div className="safe-top flex items-center justify-between px-4 pb-2">
+          <button onClick={onBack} className="w-10 h-10 -ml-2 flex items-center justify-center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M15 19L8 12L15 5" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+          <button onClick={onGoHistory} className="w-10 h-10 -mr-2 flex items-center justify-center">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 4.16667V10L13.3333 11.6667" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <circle cx="10" cy="10" r="7.5" stroke="black" strokeWidth="1.5"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* Title */}
+        <div className="px-4 mt-6">
+          <p className="text-[28px] leading-normal text-black font-normal">测测你的</p>
+          <p className="text-[32px] leading-normal text-black font-semibold">职场</p>
+          <p className="text-[32px] leading-normal text-black font-semibold inline-flex items-end gap-1">
+            性格密码
+            <img src="/images/home-search-icon.svg" alt="" className="w-[13px] h-[13px] mb-[6px]" />
+          </p>
+        </div>
+
+        {/* Subtitle */}
+        <div className="px-4 mt-3">
+          <p className="text-[13px] leading-normal text-[#656d76]">基于BFI-44量表 + AI深度解析</p>
+        </div>
+
+        {/* Feature list */}
+        <div className="px-4 mt-10 flex flex-col gap-5">
+          {[
+            '44道经典题目，科学测评',
+            '五维雷达图 + 常模对比',
+            'AI深度分析 + 岗位推荐',
+          ].map((text) => (
+            <div key={text} className="flex items-center gap-2">
+              <img src="/images/home-feature-icon.svg" alt="" className="w-[18px] h-[18px] flex-shrink-0" />
+              <span className="text-[14px] leading-[21px] text-black">{text}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* CTA buttons */}
-      <div className="safe-bottom relative z-10 shrink-0 flex flex-col gap-3 items-center" style={{ paddingLeft: '16.5%', paddingRight: '16.5%' }}>
+      {/* ---- Layer 2: CTA buttons (pinned to bottom) ---- */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-10 safe-bottom flex flex-col gap-3 items-center"
+        style={{ paddingLeft: '16.5%', paddingRight: '16.5%' }}
+      >
         <button
           onClick={onStart}
           className="w-full h-[50px] rounded-full bg-[#494949] flex items-center justify-center active:scale-[0.98] transition-transform"
