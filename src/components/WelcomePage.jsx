@@ -10,12 +10,6 @@ function loadInitialProgress() {
   return null;
 }
 
-/*
- * Label positions relative to the illustration image (339×401).
- * Figma: illustration at left=37 top=378 w=339 h=401
- * left = (figma_label_left - 37) / 339
- * top  = (figma_label_top  - 378) / 401
- */
 const dimensionLabels = [
   { text: '宜人性', left: '54.6%', top: '24.4%' },
   { text: '尽责性', left: '77.3%', top: '29.4%' },
@@ -44,43 +38,18 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
   const allAnswered = answeredCount >= totalCount && totalCount > 0;
 
   return (
-    <div className="welcome-page relative h-[100dvh] overflow-hidden">
-      {/* ---- Layer 0: Background decorative pattern ---- */}
-      <img
-        src="/images/home-bg-pattern.svg"
-        alt=""
-        className="absolute top-[-286px] left-[-41px] w-[724px] h-[1314px] opacity-80 pointer-events-none z-0"
-      />
-
-      {/* ---- Layer 1: Illustration + labels (decorative, absolute positioned) ---- */}
-      {/* Anchored from bottom; on short screens the top clips naturally via overflow-hidden */}
-      <div
-        className="absolute z-[1] pointer-events-none"
-        style={{
-          left: '9.87%',
-          width: '90.4%',
-          aspectRatio: '339 / 401',
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 4%)',
-        }}
-      >
+    <div className="welcome-page relative min-h-[100dvh]">
+      {/* Background pattern — isolated in its own overflow-hidden wrapper so the
+          main container needs no overflow setting and scrolls naturally */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <img
-          src="/images/home-illustration.svg"
+          src="/images/home-bg-pattern.svg"
           alt=""
-          className="w-full h-full"
+          className="absolute top-[-286px] left-[-41px] w-[724px] h-[1314px] opacity-80"
         />
-        {dimensionLabels.map(({ text, left, top }) => (
-          <div
-            key={text}
-            className="absolute flex flex-col items-center gap-1"
-            style={{ left, top }}
-          >
-            <span className="text-[14px] leading-[21px] text-[#98cebd] whitespace-nowrap">{text}</span>
-            <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
-          </div>
-        ))}
       </div>
 
-      {/* ---- Layer 2: Top content (normal flow) ---- */}
+      {/* Top content — normal flow */}
       <div className="relative z-10">
         {/* Navigation bar */}
         <div className="safe-top flex items-center justify-between px-4 pb-2">
@@ -127,10 +96,32 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
         </div>
       </div>
 
-      {/* ---- Layer 2: CTA buttons (pinned to bottom) ---- */}
+      {/* Illustration + labels — in flow, overlaps features & CTA via negative margins */}
       <div
-        className="absolute bottom-0 left-0 right-0 z-10 safe-bottom flex flex-col gap-3 items-center"
-        style={{ paddingLeft: '16.5%', paddingRight: '16.5%' }}
+        className="relative z-[1] pointer-events-none"
+        style={{ marginLeft: '9.87%', width: '90.4%', aspectRatio: '339 / 401', marginTop: '-5%' }}
+      >
+        <img
+          src="/images/home-illustration.svg"
+          alt=""
+          className="w-full h-full"
+        />
+        {dimensionLabels.map(({ text, left, top }) => (
+          <div
+            key={text}
+            className="absolute flex flex-col items-center gap-1"
+            style={{ left, top }}
+          >
+            <span className="text-[14px] leading-[21px] text-[#98cebd] whitespace-nowrap">{text}</span>
+            <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
+          </div>
+        ))}
+      </div>
+
+      {/* CTA buttons — overlaps bottom of illustration */}
+      <div
+        className="relative z-10 safe-bottom flex flex-col gap-3 items-center"
+        style={{ paddingLeft: '16.5%', paddingRight: '16.5%', marginTop: '-30%' }}
       >
         <button
           onClick={onStart}
