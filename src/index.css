@@ -320,3 +320,8 @@ body {
   margin: 0 12px 8px;
   border-radius: 20px;
 }
+
+/* Welcome page */
+.welcome-page {
+  background: linear-gradient(180deg, #fffaef 0%, #f6f6f6 100%);
+}

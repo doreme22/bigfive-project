@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { loadQuizProgress, clearQuizProgress } from '../utils/storage';
 import ModalOverlay from './ui/ModalOverlay';
 
-const traits = ['外向性', '宜人性', '尽责性', '情绪性', '开放性'];
-
 function loadInitialProgress() {
   const progress = loadQuizProgress();
   if (progress && progress.shuffledIds && progress.shuffledIds.length > 0) {
@@ -13,16 +11,8 @@ function loadInitialProgress() {
 }
 
 export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onRestoreProgress, onBack }) {
-  const [activeIndex, setActiveIndex] = useState(0);
   const [savedProgress, setSavedProgress] = useState(loadInitialProgress);
   const [showRestoreModal, setShowRestoreModal] = useState(() => loadInitialProgress() !== null);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveIndex((i) => (i + 1) % traits.length);
-    }, 2000);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleRestore = () => {
     setShowRestoreModal(false);
@@ -40,97 +30,101 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
   const allAnswered = answeredCount >= totalCount && totalCount > 0;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 right-10 w-40 h-40 bg-[#1a6b4a]/10 rounded-full blur-3xl" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-[#1a6b4a]/5 rounded-full blur-3xl" />
+    <div className="welcome-page relative min-h-screen overflow-hidden">
+      {/* Background decorative pattern */}
+      <img
+        src="/images/home-bg-pattern.svg"
+        alt=""
+        className="absolute top-[-286px] left-[-41px] w-[724px] h-[1314px] opacity-80 pointer-events-none"
+      />
 
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        className="absolute top-4 left-4 glass w-10 h-10 rounded-xl flex items-center justify-center text-text-secondary active:text-primary transition-colors"
-      >
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-      </button>
-
-      {/* History button */}
-      <button
-        onClick={onGoHistory}
-        className="absolute top-4 right-4 glass w-10 h-10 rounded-xl flex items-center justify-center text-text-secondary active:text-primary transition-colors"
-        title="历史记录"
-      >
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </button>
-
-      {/* Icon */}
-      <div className="animate-fade-in-up mb-8">
-        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#1a6b4a] to-[#22875e] flex items-center justify-center shadow-xl animate-float">
-          <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+      {/* Top navigation bar */}
+      <div className="relative z-10 flex items-center justify-between px-4 pt-14 pb-2">
+        <button onClick={onBack} className="w-6 h-6 flex items-center justify-center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 19L8 12L15 5" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-        </div>
+        </button>
+        <button onClick={onGoHistory} className="w-6 h-6 flex items-center justify-center">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 4.16667V10L13.3333 11.6667" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="10" cy="10" r="7.5" stroke="black" strokeWidth="1.5"/>
+          </svg>
+        </button>
       </div>
 
-      {/* Title */}
-      <div className="animate-fade-in-up text-center" style={{ animationDelay: '0.15s' }}>
-        <h1 className="text-3xl font-bold mb-3">
-          <span className="gradient-text">职业性格测评</span>
-        </h1>
-        <p className="text-text-secondary text-sm max-w-xs mx-auto leading-relaxed">
-          基于 BFI-44 量表 + AI 深度解析
-          <br />
-          发现你的职场性格密码
-        </p>
+      {/* Title section */}
+      <div className="relative z-10 pl-4 mt-6 w-[206px]">
+        <p className="text-[28px] leading-normal text-black font-normal">测测你的</p>
+        <p className="text-[32px] leading-normal text-black font-semibold">职场</p>
+        <p className="text-[32px] leading-normal text-black font-semibold">性格密码</p>
       </div>
 
-      {/* Animated traits */}
-      <div className="animate-fade-in-up mt-8 flex gap-2 flex-wrap justify-center max-w-xs" style={{ animationDelay: '0.3s' }}>
-        {traits.map((t, i) => (
-          <span
-            key={t}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-500 ${
-              i === activeIndex
-                ? 'bg-primary text-white scale-110 shadow-lg shadow-primary/30'
-                : 'bg-bg-card text-text-secondary border border-border'
-            }`}
-          >
-            {t}
-          </span>
-        ))}
+      {/* Subtitle */}
+      <div className="relative z-10 pl-4 mt-3">
+        <p className="text-[13px] leading-normal text-[#656d76]">基于BFI-44量表 + AI深度解析</p>
       </div>
 
-      {/* Features */}
-      <div className="animate-fade-in-up mt-10 space-y-3 w-full max-w-xs" style={{ animationDelay: '0.45s' }}>
+      {/* Feature list */}
+      <div className="relative z-10 pl-4 mt-10 flex flex-col gap-5 w-[343px]">
         {[
-          { icon: '📋', text: '44 道经典题目，科学测评' },
-          { icon: '📊', text: '五维雷达图 + 常模对比' },
-          { icon: '🤖', text: 'AI 深度分析 + 岗位推荐' },
-        ].map((item) => (
-          <div key={item.text} className="flex items-center gap-3 glass rounded-xl px-4 py-3">
-            <span className="text-lg">{item.icon}</span>
-            <span className="text-sm text-text-secondary">{item.text}</span>
+          '44道经典题目，科学测评',
+          '五维雷达图 + 常模对比',
+          'AI深度分析 + 岗位推荐',
+        ].map((text) => (
+          <div key={text} className="flex items-center gap-2">
+            <img src="/images/home-feature-icon.svg" alt="" className="w-[18px] h-[18px] flex-shrink-0" />
+            <span className="text-[14px] leading-[21px] text-black">{text}</span>
           </div>
         ))}
       </div>
 
-      {/* Start button */}
-      <div className="animate-fade-in-up mt-10 w-full max-w-xs" style={{ animationDelay: '0.6s' }}>
+      {/* Illustration with personality labels */}
+      <div className="relative z-10 mt-[-10px]">
+        <img
+          src="/images/home-illustration.svg"
+          alt=""
+          className="ml-[37px] w-[339px] h-[401px] pointer-events-none"
+        />
+        {/* Floating personality dimension labels */}
+        <div className="absolute left-[222px] top-[18px] flex flex-col items-center gap-2">
+          <span className="text-[14px] leading-[21px] text-[#98cebd]">宜人性</span>
+          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
+        </div>
+        <div className="absolute left-[299px] top-[38px] flex flex-col items-center gap-2">
+          <span className="text-[14px] leading-[21px] text-[#98cebd]">尽责性</span>
+          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
+        </div>
+        <div className="absolute left-[149px] top-[102px] flex flex-col items-center gap-2">
+          <span className="text-[14px] leading-[21px] text-[#98cebd]">外向性</span>
+          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
+        </div>
+        <div className="absolute left-[323px] top-[117px] flex flex-col items-center gap-2">
+          <span className="text-[14px] leading-[21px] text-[#98cebd]">情绪性</span>
+          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
+        </div>
+        <div className="absolute left-[252px] top-[164px] flex flex-col items-center gap-2">
+          <span className="text-[14px] leading-[21px] text-[#98cebd]">开放性</span>
+          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
+        </div>
+      </div>
+
+      {/* CTA buttons */}
+      <div className="relative z-10 flex flex-col gap-3 items-center px-[62px] mt-[-80px] pb-12">
         <button
           onClick={onStart}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white font-semibold text-lg shadow-xl shadow-primary/25 active:scale-[0.98] transition-transform"
+          className="w-full h-[50px] rounded-full bg-[#494949] flex items-center justify-center active:scale-[0.98] transition-transform"
         >
-          开始测评
+          <span className="text-[16px] font-semibold text-[#d1fff0]">开始测试</span>
         </button>
         <button
           onClick={onGoManualInput}
-          className="w-full mt-4 text-center text-sm text-primary active:text-primary-dark transition-colors py-2"
+          className="w-full h-[50px] rounded-full flex items-center justify-center gap-0.5"
         >
-          已有 MBTI / 荣格八维数据？点此输入 →
+          <span className="text-[16px] font-semibold text-[#7b838d]">已有MBTI / 荣格八维？</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="rotate-180">
+            <path d="M10 4L6 8L10 12" stroke="#7b838d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </button>
       </div>
 
