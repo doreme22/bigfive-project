@@ -1,17 +1,16 @@
 export default function PageHeader({ title, onBack, rightAction }) {
   return (
-    <div className="sticky top-0 z-10 bg-bg-dark/95 backdrop-blur-sm px-4 py-3 flex items-center justify-between">
+    <div className="sticky top-0 z-10 backdrop-blur-sm safe-top flex items-center justify-between px-4 pb-2">
       <button
         onClick={onBack}
-        className="flex items-center gap-1 text-sm text-text-secondary active:text-primary transition-colors"
+        className="w-10 h-10 -ml-2 flex items-center justify-center"
       >
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M15 19L8 12L15 5" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
-        返回
       </button>
-      <h1 className="text-base font-semibold text-text-primary">{title}</h1>
-      <div className="w-12 flex justify-end">
+      <span className="text-[16px] font-medium text-black">{title}</span>
+      <div className="w-10 h-10 -mr-2 flex items-center justify-center">
         {rightAction || null}
       </div>
     </div>

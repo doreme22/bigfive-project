@@ -38,10 +38,10 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg-dark">
+    <div className="min-h-screen flex flex-col bg-[#FBFBFB]">
       <PageHeader title="历史记录" onBack={onBack} />
 
-      <div className="flex-1 px-6 pb-8">
+      <div className="flex-1 flex flex-col items-center pt-3 pb-5">
         {history.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center">
             <svg className="w-16 h-16 text-text-secondary/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
@@ -51,12 +51,12 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
             <p className="text-text-secondary/50 text-xs mt-1">完成一次测评后记录将出现在这里</p>
           </div>
         ) : (
-          <div className="space-y-3 mt-4">
+          <div className="w-[343px] flex flex-col gap-5">
             {history.map((record) => (
               <button
                 key={record.id}
                 onClick={() => onSelectRecord(record.id)}
-                className="w-full text-left glass rounded-2xl p-4 active:bg-bg-card-hover transition-colors"
+                className="w-full text-left rounded-[12px] p-5 bg-white border border-[#F1F2F4] active:bg-[#f8f8f8] transition-colors"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
