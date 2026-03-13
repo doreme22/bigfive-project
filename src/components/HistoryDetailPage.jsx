@@ -47,7 +47,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
 
   if (!record) {
     return (
-      <div className="min-h-screen flex flex-col bg-bg-dark">
+      <div className="min-h-screen flex flex-col bg-[#FBFBFB]">
         <PageHeader title="历史记录详情" onBack={onBack} />
         <div className="flex-1 flex items-center justify-center">
           <p className="text-text-secondary text-sm">记录不存在或已被删除</p>
@@ -64,37 +64,25 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
       : [{ key: 'test', label: '测评结果' }];
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg-dark pb-8">
-      <PageHeader title="历史报告" onBack={onBack} />
-
-      {/* Meta info */}
-      <div className="px-6 py-3">
-        <div className="flex items-center gap-2 text-xs text-text-secondary">
-          <span>{new Date(record.timestamp).toLocaleString('zh-CN')}</span>
-          {record.personalityTag && (
-            <>
-              <span className="w-1 h-1 rounded-full bg-border" />
-              <span className="text-primary">{record.personalityTag}</span>
-            </>
-          )}
+    <div className="min-h-screen flex flex-col bg-[#FBFBFB] pb-8">
+      {/* Sticky header + tabs as one unit */}
+      <div className="sticky top-0 z-10 bg-[#FBFBFB]">
+        <PageHeader title="历史报告" onBack={onBack} sticky={false} />
+        <div className="px-6 py-3 flex gap-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                activeTab === tab.key
+                  ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                  : 'bg-bg-card text-text-secondary'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="sticky top-0 z-10 bg-bg-dark/95 backdrop-blur-sm px-6 py-3 flex gap-2">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              activeTab === tab.key
-                ? 'bg-primary text-white shadow-lg shadow-primary/25'
-                : 'bg-bg-card text-text-secondary'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
       </div>
 
       {/* Content */}

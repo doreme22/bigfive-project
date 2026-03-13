@@ -1,6 +1,6 @@
-export default function PageHeader({ title, onBack, rightAction }) {
+export default function PageHeader({ title, onBack, rightAction, sticky = true }) {
   return (
-    <div className="sticky top-0 z-10 backdrop-blur-sm safe-top flex items-center justify-between px-4 pb-2">
+    <div className={`${sticky ? 'sticky top-0 z-10' : ''} bg-[#FBFBFB] safe-top flex items-center justify-between px-4 pb-2`}>
       <button
         onClick={onBack}
         className="w-10 h-10 -ml-2 flex items-center justify-center"
