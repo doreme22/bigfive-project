@@ -13,11 +13,15 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
     setSelected(currentAnswer || null);
   }, [question.id, currentAnswer]);
 
+  const isLast = index === total - 1;
+
   const handleSelect = (value) => {
     setSelected(value);
-    setTimeout(() => {
-      onAnswer(question.id, value);
-    }, 200);
+    if (!isLast) {
+      setTimeout(() => {
+        onAnswer(question.id, value);
+      }, 200);
+    }
   };
 
   const handleBack = () => {
@@ -114,15 +118,23 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
             )}
             <button
               onClick={() => {
-                if (selected) handleSelect(selected);
+                if (selected) {
+                  if (isLast) {
+                    onAnswer(question.id, selected);
+                  } else {
+                    handleSelect(selected);
+                  }
+                }
               }}
               disabled={!selected}
               className={`flex items-center gap-1 ${!selected ? 'opacity-30' : ''}`}
             >
-              <span className="text-[14px] text-[#00674d] leading-[21px]">下一题</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="rotate-180">
-                <path d="M10 4L6 8L10 12" stroke="#00674d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+              <span className="text-[14px] text-[#00674d] leading-[21px]">{isLast ? '完成' : '下一题'}</span>
+              {!isLast && (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="rotate-180">
+                  <path d="M10 4L6 8L10 12" stroke="#00674d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
             </button>
           </div>
         </div>
