@@ -45,7 +45,7 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
         <img
           src="/images/home-bg-pattern.svg"
           alt=""
-          className="absolute top-[-286px] left-[-41px] w-[724px] h-[1314px] opacity-80"
+          className="absolute top-[-286px] left-[-41px] w-[851px] h-[1334px] opacity-80"
         />
       </div>
 
