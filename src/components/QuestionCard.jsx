@@ -6,8 +6,6 @@ const optionLetters = ['A', 'B', 'C', 'D', 'E'];
 
 export default function QuestionCard({ question, index, total, onAnswer, onBack, onExit, currentAnswer }) {
   const [selected, setSelected] = useState(currentAnswer || null);
-  const [animDir, setAnimDir] = useState('right');
-  const [animating, setAnimating] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
   const progress = ((index) / total) * 100;
 
@@ -16,24 +14,15 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
   }, [question.id, currentAnswer]);
 
   const handleSelect = (value) => {
-    if (animating) return;
     setSelected(value);
-    setAnimating(true);
-    setAnimDir('right');
     setTimeout(() => {
       onAnswer(question.id, value);
-      setAnimating(false);
-    }, 350);
+    }, 200);
   };
 
   const handleBack = () => {
-    if (animating || index === 0) return;
-    setAnimDir('left');
-    setAnimating(true);
-    setTimeout(() => {
-      onBack();
-      setAnimating(false);
-    }, 300);
+    if (index === 0) return;
+    onBack();
   };
 
   return (
@@ -79,10 +68,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
           className="mx-4 mt-6 bg-white rounded-[12px] px-5 py-7"
           style={{ boxShadow: '-10px -11px 30px 0px rgba(0,0,0,0.03), 15px 13px 30px 0px rgba(0,0,0,0.1)' }}
         >
-          <div
-            key={question.id}
-            className={animDir === 'right' ? 'animate-slide-right' : 'animate-slide-left'}
-          >
+          <div>
             {/* Question text */}
             <p className="text-[18px] font-medium text-black tracking-[0.5px] leading-[24px]">
               {index + 1}、{question.text}
@@ -96,7 +82,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
                   <button
                     key={opt.value}
                     onClick={() => handleSelect(opt.value)}
-                    disabled={animating}
+
                     className={`w-full flex gap-3 items-start p-5 rounded-[4px] text-left transition-all duration-200 ${
                       isSelected
                         ? 'bg-[#EBFAF5] ring-1 ring-[#009688]'
@@ -109,34 +95,32 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
                 );
               })}
             </div>
+          </div>
 
-            {/* Prev / Next navigation */}
-            <div className="mt-10 flex items-center justify-between">
-              <button
-                onClick={handleBack}
-                disabled={index === 0}
-                className={`flex items-center gap-1 ${index === 0 ? 'opacity-30' : ''}`}
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="scale-y-[-1]">
-                  <path d="M10 4L6 8L10 12" stroke="#7b838d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                <span className="text-[14px] text-[#7b838d] leading-[21px]">上一题</span>
-              </button>
-              <button
-                onClick={() => {
-                  if (selected && !animating) {
-                    handleSelect(selected);
-                  }
-                }}
-                disabled={!selected || animating}
-                className={`flex items-center gap-1 ${!selected ? 'opacity-30' : ''}`}
-              >
-                <span className="text-[14px] text-[#00674d] leading-[21px]">下一题</span>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="rotate-180">
-                  <path d="M10 4L6 8L10 12" stroke="#00674d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-            </div>
+          {/* Prev / Next navigation — outside animated wrapper */}
+          <div className="mt-10 flex items-center justify-between">
+            <button
+              onClick={handleBack}
+              disabled={index === 0}
+              className={`flex items-center gap-1 ${index === 0 ? 'opacity-30' : ''}`}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="scale-y-[-1]">
+                <path d="M10 4L6 8L10 12" stroke="#7b838d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-[14px] text-[#7b838d] leading-[21px]">上一题</span>
+            </button>
+            <button
+              onClick={() => {
+                if (selected) handleSelect(selected);
+              }}
+              disabled={!selected}
+              className={`flex items-center gap-1 ${!selected ? 'opacity-30' : ''}`}
+            >
+              <span className="text-[14px] text-[#00674d] leading-[21px]">下一题</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="rotate-180">
+                <path d="M10 4L6 8L10 12" stroke="#00674d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
