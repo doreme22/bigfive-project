@@ -100,14 +100,14 @@ export default function ManualInputPage({ onSubmit, onBack }) {
       </div>
 
       {/* Submit */}
-      <div className="px-6 pb-6">
+      <div className="flex justify-center pb-6">
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className={`w-full py-4 rounded-2xl font-semibold text-lg transition-all ${
+          className={`w-[331px] h-[50px] rounded-[12px] text-[16px] font-semibold transition-all ${
             canSubmit
-              ? 'bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white shadow-xl shadow-primary/25 active:scale-[0.98]'
-              : 'bg-bg-card text-text-secondary/50 cursor-not-allowed'
+              ? 'bg-[#494949] text-[#D1FFF0] active:scale-[0.98]'
+              : 'bg-[#d0d0d0] text-[#a0a0a0] cursor-not-allowed'
           }`}
         >
           下一步

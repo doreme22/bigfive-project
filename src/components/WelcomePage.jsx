@@ -38,7 +38,7 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
   const allAnswered = answeredCount >= totalCount && totalCount > 0;
 
   return (
-    <div className="welcome-page relative min-h-[100dvh]">
+    <div className="welcome-page relative h-[100dvh] flex flex-col overflow-hidden">
       {/* Top content — normal flow */}
       <div className="relative z-10">
         {/* Navigation bar */}
@@ -86,7 +86,7 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
         </div>
       </div>
 
-      {/* Illustration + labels — in flow, overlaps features & CTA via negative margins */}
+      {/* Illustration + labels — fills remaining space */}
       <div
         className="relative z-[1] pointer-events-none"
         style={{ marginLeft: '9.87%', width: '90.4%', aspectRatio: '339 / 401', marginTop: '-5%' }}
@@ -107,11 +107,9 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
           </div>
         ))}
       </div>
-
-      {/* CTA buttons — overlaps bottom of illustration */}
       <div
-        className="relative z-10 safe-bottom flex flex-col gap-3 items-center"
-        style={{ paddingLeft: '16.5%', paddingRight: '16.5%', marginTop: '-30%' }}
+        className="absolute bottom-0 left-0 right-0 z-10 flex flex-col gap-3 items-center pb-6"
+        style={{ paddingLeft: '16.5%', paddingRight: '16.5%' }}
       >
         <button
           onClick={onStart}
