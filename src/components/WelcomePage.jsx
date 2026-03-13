@@ -49,9 +49,9 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
             </svg>
           </button>
           <button onClick={onGoHistory} className="w-10 h-10 -mr-2 flex items-center justify-center">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M10 4.16667V10L13.3333 11.6667" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <circle cx="10" cy="10" r="7.5" stroke="black" strokeWidth="1.5"/>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" stroke="black" strokeWidth="1.5"/>
+              <path d="M12 8V11.7324C12 11.8996 12.0836 12.0557 12.2226 12.1484L15 14" stroke="black" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
           </button>
         </div>
