@@ -75,7 +75,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
               onClick={() => setActiveTab(tab.key)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
                 activeTab === tab.key
-                  ? 'bg-primary text-white shadow-lg shadow-primary/25'
+                  ? 'bg-primary text-white'
                   : 'bg-bg-card text-text-secondary'
               }`}
             >
@@ -94,7 +94,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
             {!hasReport && onGoResume && (
               <button
                 onClick={() => onGoResume(record)}
-                className="w-full mt-6 glass rounded-2xl p-5 text-center active:bg-bg-card-hover transition-colors"
+                className="w-full mt-6 bg-white rounded-[12px] border border-[#F1F2F4] p-5 text-center active:bg-[#f8f8f8] transition-colors"
               >
                 <svg className="w-8 h-8 text-primary mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -119,7 +119,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
 
         {/* Manual input with report generation failed */}
         {activeTab === 'report' && !hasReport && isManual && (
-          <div className="animate-fade-in glass rounded-3xl p-6 text-center">
+          <div className="animate-fade-in bg-white rounded-[12px] border border-[#F1F2F4] p-6 text-center">
             <svg className="w-12 h-12 text-text-secondary/40 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
             </svg>
@@ -128,7 +128,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
             {onGoResume && (
               <button
                 onClick={() => onGoResume(record)}
-                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white font-semibold text-sm shadow-lg shadow-primary/25 active:scale-[0.98] transition-all"
+                className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white font-semibold text-sm active:scale-[0.98] transition-all"
               >
                 重新上传简历
               </button>

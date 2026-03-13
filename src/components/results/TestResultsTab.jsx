@@ -46,7 +46,7 @@ export default function TestResultsTab({ scores }) {
   return (
     <div className="animate-fade-in">
       {/* Radar chart */}
-      <div className="glass rounded-3xl p-4 mb-6">
+      <div className="bg-white rounded-[12px] border border-[#F1F2F4] p-4 mb-6">
         <h3 className="text-sm font-semibold text-text-secondary mb-2 text-center">
           五维人格雷达图
         </h3>
@@ -54,7 +54,7 @@ export default function TestResultsTab({ scores }) {
       </div>
 
       {/* Score bars */}
-      <div className="glass rounded-3xl p-5 mb-4">
+      <div className="bg-white rounded-[12px] border border-[#F1F2F4] p-5 mb-4">
         <h3 className="text-sm font-semibold text-text-secondary mb-4">各维度得分详情</h3>
         {Object.keys(dimensionNames).map((dim) => (
           <ScoreBar key={dim} dim={dim} score={scores[dim]} />
@@ -67,7 +67,7 @@ export default function TestResultsTab({ scores }) {
       {/* Dimension descriptions */}
       <div className="space-y-3">
         {Object.entries(dimensionDescriptions).map(([dim, desc]) => (
-          <div key={dim} className="glass rounded-2xl p-4">
+          <div key={dim} className="bg-white rounded-[12px] border border-[#F1F2F4] p-4">
             <div className="flex items-center gap-2 mb-2">
               <span className="w-2 h-2 rounded-full bg-primary" />
               <span className="text-sm font-semibold text-text-primary">
