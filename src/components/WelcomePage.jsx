@@ -39,16 +39,6 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
 
   return (
     <div className="welcome-page relative min-h-[100dvh]">
-      {/* Background pattern — isolated in its own overflow-hidden wrapper so the
-          main container needs no overflow setting and scrolls naturally */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <img
-          src="/images/home-bg-pattern.svg"
-          alt=""
-          className="absolute top-[-286px] left-[-41px] w-[851px] h-[1334px] opacity-80"
-        />
-      </div>
-
       {/* Top content — normal flow */}
       <div className="relative z-10">
         {/* Navigation bar */}
