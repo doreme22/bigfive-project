@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { loadQuizProgress, clearQuizProgress } from '../utils/storage';
 import ModalOverlay from './ui/ModalOverlay';
 
@@ -9,6 +9,15 @@ function loadInitialProgress() {
   }
   return null;
 }
+
+/* Figma 375×812 design → percentage-based layout for multi-device support */
+const dimensionLabels = [
+  { text: '宜人性', left: '59.2%', top: '24.4%' },   // 222/375, 98/401
+  { text: '尽责性', left: '79.7%', top: '29.4%' },   // 299/375, 118/401
+  { text: '外向性', left: '39.7%', top: '45.4%' },   // 149/375, 182/401
+  { text: '情绪性', left: '86.1%', top: '49.1%' },   // 323/375, 197/401
+  { text: '开放性', left: '67.2%', top: '60.8%' },   // 252/375, 244/401
+];
 
 export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onRestoreProgress, onBack }) {
   const [savedProgress, setSavedProgress] = useState(loadInitialProgress);
@@ -30,22 +39,22 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
   const allAnswered = answeredCount >= totalCount && totalCount > 0;
 
   return (
-    <div className="welcome-page relative min-h-screen overflow-hidden">
-      {/* Background decorative pattern */}
+    <div className="welcome-page relative min-h-screen min-h-[100dvh] overflow-hidden">
+      {/* Background decorative pattern — decorative, overflow clipped */}
       <img
         src="/images/home-bg-pattern.svg"
         alt=""
         className="absolute top-[-286px] left-[-41px] w-[724px] h-[1314px] opacity-80 pointer-events-none"
       />
 
-      {/* Top navigation bar */}
-      <div className="relative z-10 flex items-center justify-between px-4 pt-14 pb-2">
-        <button onClick={onBack} className="w-6 h-6 flex items-center justify-center">
+      {/* Top navigation bar — safe area aware */}
+      <div className="safe-top relative z-10 flex items-center justify-between px-4 pb-2">
+        <button onClick={onBack} className="w-10 h-10 -ml-2 flex items-center justify-center">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M15 19L8 12L15 5" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
-        <button onClick={onGoHistory} className="w-6 h-6 flex items-center justify-center">
+        <button onClick={onGoHistory} className="w-10 h-10 -mr-2 flex items-center justify-center">
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
             <path d="M10 4.16667V10L13.3333 11.6667" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             <circle cx="10" cy="10" r="7.5" stroke="black" strokeWidth="1.5"/>
@@ -54,19 +63,22 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
       </div>
 
       {/* Title section */}
-      <div className="relative z-10 pl-4 mt-6 w-[206px]">
+      <div className="relative z-10 px-4 mt-6">
         <p className="text-[28px] leading-normal text-black font-normal">测测你的</p>
         <p className="text-[32px] leading-normal text-black font-semibold">职场</p>
-        <p className="text-[32px] leading-normal text-black font-semibold">性格密码</p>
+        <p className="text-[32px] leading-normal text-black font-semibold inline-flex items-end gap-1">
+          性格密码
+          <img src="/images/home-search-icon.svg" alt="" className="w-[13px] h-[13px] mb-[6px]" />
+        </p>
       </div>
 
       {/* Subtitle */}
-      <div className="relative z-10 pl-4 mt-3">
+      <div className="relative z-10 px-4 mt-3">
         <p className="text-[13px] leading-normal text-[#656d76]">基于BFI-44量表 + AI深度解析</p>
       </div>
 
       {/* Feature list */}
-      <div className="relative z-10 pl-4 mt-10 flex flex-col gap-5 w-[343px]">
+      <div className="relative z-10 px-4 mt-10 flex flex-col gap-5">
         {[
           '44道经典题目，科学测评',
           '五维雷达图 + 常模对比',
@@ -79,38 +91,32 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
         ))}
       </div>
 
-      {/* Illustration with personality labels */}
-      <div className="relative z-10 mt-[-10px]">
+      {/* Illustration with personality labels — percentage-based for responsive scaling */}
+      <div className="relative z-10 mt-[-2.7%]">
         <img
           src="/images/home-illustration.svg"
           alt=""
-          className="ml-[37px] w-[339px] h-[401px] pointer-events-none"
+          className="pointer-events-none"
+          style={{ marginLeft: '9.87%', width: '90.4%', aspectRatio: '339 / 401' }}
         />
         {/* Floating personality dimension labels */}
-        <div className="absolute left-[222px] top-[18px] flex flex-col items-center gap-2">
-          <span className="text-[14px] leading-[21px] text-[#98cebd]">宜人性</span>
-          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
-        </div>
-        <div className="absolute left-[299px] top-[38px] flex flex-col items-center gap-2">
-          <span className="text-[14px] leading-[21px] text-[#98cebd]">尽责性</span>
-          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
-        </div>
-        <div className="absolute left-[149px] top-[102px] flex flex-col items-center gap-2">
-          <span className="text-[14px] leading-[21px] text-[#98cebd]">外向性</span>
-          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
-        </div>
-        <div className="absolute left-[323px] top-[117px] flex flex-col items-center gap-2">
-          <span className="text-[14px] leading-[21px] text-[#98cebd]">情绪性</span>
-          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
-        </div>
-        <div className="absolute left-[252px] top-[164px] flex flex-col items-center gap-2">
-          <span className="text-[14px] leading-[21px] text-[#98cebd]">开放性</span>
-          <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
-        </div>
+        {dimensionLabels.map(({ text, left, top }) => (
+          <div
+            key={text}
+            className="absolute flex flex-col items-center gap-2"
+            style={{ left, top }}
+          >
+            <span className="text-[14px] leading-[21px] text-[#98cebd] whitespace-nowrap">{text}</span>
+            <span className="w-[7px] h-[7px] rounded-full bg-[#98cebd]" />
+          </div>
+        ))}
       </div>
 
-      {/* CTA buttons */}
-      <div className="relative z-10 flex flex-col gap-3 items-center px-[62px] mt-[-80px] pb-12">
+      {/* CTA buttons — safe area aware bottom */}
+      <div
+        className="safe-bottom relative z-10 flex flex-col gap-3 items-center"
+        style={{ marginTop: '-21.3%', paddingLeft: '16.5%', paddingRight: '16.5%' }}
+      >
         <button
           onClick={onStart}
           className="w-full h-[50px] rounded-full bg-[#494949] flex items-center justify-center active:scale-[0.98] transition-transform"

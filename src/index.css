@@ -325,3 +325,12 @@ body {
 .welcome-page {
   background: linear-gradient(180deg, #fffaef 0%, #f6f6f6 100%);
 }
+
+/* Safe area utilities */
+.safe-top {
+  padding-top: calc(env(safe-area-inset-top, 20px) + 12px);
+}
+
+.safe-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 48px);
+}
