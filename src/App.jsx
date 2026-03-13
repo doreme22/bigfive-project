@@ -48,12 +48,16 @@ const initialState = {
   selectedJobId: null,
   previousStage: null,
   supplementingRecordId: null,
+  suppressRestore: false,
 };
 
 function reducer(state, action) {
   switch (action.type) {
     case 'SET_STAGE':
-      return { ...state, stage: action.payload };
+      return { ...state, stage: action.payload, suppressRestore: false };
+
+    case 'EXIT_QUIZ':
+      return { ...state, stage: STAGE.WELCOME, suppressRestore: true };
 
     case 'START_QUIZ': {
       const shuffled = shuffleQuestions();
@@ -386,6 +390,7 @@ export default function App() {
           onGoHistory={() => dispatch({ type: 'SET_STAGE', payload: STAGE.HISTORY })}
           onRestoreProgress={handleRestoreProgress}
           onBack={() => dispatch({ type: 'SET_STAGE', payload: STAGE.HOME })}
+          suppressRestore={state.suppressRestore}
         />
       )}
 
@@ -396,6 +401,7 @@ export default function App() {
           total={state.shuffled.length}
           onAnswer={handleAnswer}
           onBack={handleBack}
+          onExit={() => dispatch({ type: 'EXIT_QUIZ' })}
           currentAnswer={state.answers[state.shuffled[state.currentIndex]?.id]}
         />
       )}

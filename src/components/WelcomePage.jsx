@@ -18,9 +18,9 @@ const dimensionLabels = [
   { text: '开放性', left: '63.4%', top: '60.8%' },
 ];
 
-export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onRestoreProgress, onBack }) {
+export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onRestoreProgress, onBack, suppressRestore }) {
   const [savedProgress, setSavedProgress] = useState(loadInitialProgress);
-  const [showRestoreModal, setShowRestoreModal] = useState(() => loadInitialProgress() !== null);
+  const [showRestoreModal, setShowRestoreModal] = useState(() => !suppressRestore && loadInitialProgress() !== null);
 
   const handleRestore = () => {
     setShowRestoreModal(false);
