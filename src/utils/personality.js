@@ -11,13 +11,6 @@ export function mergePersonalityData(bfiScores, jungScores, mbtiType) {
   return bfiScores || null;
 }
 
-// 荣格功能 → 通俗特质标签
-const jungTraitLabels = {
-  Ni: '洞察型', Ne: '发散型',
-  Ti: '分析型', Te: '效率型',
-  Fi: '理想型', Fe: '共情型',
-  Si: '稳健型', Se: '行动型',
-};
 
 // 生成简短性格标签
 export function generatePersonalityTag(bfiScores, mbtiType, jungScores) {
@@ -26,23 +19,32 @@ export function generatePersonalityTag(bfiScores, mbtiType, jungScores) {
   // MBTI 类型
   if (mbtiType) parts.push(mbtiType.toUpperCase());
 
-  // BFI 最突出维度
+  // BFI 高+低突出维度
   if (bfiScores) {
     const norms = { E: 3.10, A: 3.75, C: 3.36, N: 3.05, O: 3.69 };
-    const labels = { E: '高外向性', A: '高宜人性', C: '高尽责性', N: '高情绪性', O: '高开放性' };
+    const highLabels = { E: '高外向性', A: '高宜人性', C: '高尽责性', N: '高情绪性', O: '高开放性' };
     const lowLabels = { E: '内向型', A: '独立型', C: '灵活型', N: '情绪稳定', O: '务实型' };
 
-    let maxDiff = 0;
-    let maxDim = null;
+    let bestHigh = null, bestHighDiff = 0;
+    let bestLow = null, bestLowDiff = 0;
     for (const dim of ['E', 'A', 'C', 'N', 'O']) {
-      const diff = Math.abs(bfiScores[dim] - norms[dim]);
-      if (diff > maxDiff) {
-        maxDiff = diff;
-        maxDim = dim;
+      const diff = bfiScores[dim] - norms[dim];
+      if (diff > 0.2 && diff > bestHighDiff) {
+        bestHighDiff = diff;
+        bestHigh = dim;
+      }
+      if (diff < -0.2 && Math.abs(diff) > bestLowDiff) {
+        bestLowDiff = Math.abs(diff);
+        bestLow = dim;
       }
     }
-    if (maxDim && maxDiff > 0.2) {
-      parts.push(bfiScores[maxDim] > norms[maxDim] ? labels[maxDim] : lowLabels[maxDim]);
+
+    if (bestHigh && bestLow) {
+      parts.push(highLabels[bestHigh] + ' · ' + lowLabels[bestLow]);
+    } else if (bestHigh) {
+      parts.push(highLabels[bestHigh]);
+    } else if (bestLow) {
+      parts.push(lowLabels[bestLow]);
     } else {
       parts.push('均衡型');
     }
@@ -54,9 +56,9 @@ export function generatePersonalityTag(bfiScores, mbtiType, jungScores) {
       .filter(([, v]) => v > 0)
       .sort(([, a], [, b]) => b - a);
     if (sorted.length >= 2) {
-      parts.push(jungLabels[sorted[0][0]] + '-' + jungLabels[sorted[1][0]]);
+      parts.push(sorted[0][0] + '-' + sorted[1][0]);
     } else if (sorted.length === 1) {
-      parts.push(jungLabels[sorted[0][0]] + '主导');
+      parts.push(sorted[0][0]);
     }
   }
 
