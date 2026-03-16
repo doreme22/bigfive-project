@@ -15,7 +15,6 @@ export default function ManualInputPage({ onSubmit, onBack, initialData }) {
   const [mode, setMode] = useState(initialData?.mode || MODE_MBTI);
   const [mbtiSelections, setMbtiSelections] = useState(initialData?.mbtiSelections || {});
   const [jungScores, setJungScores] = useState(initialData?.jungScores || defaultJung);
-  const [jungTouched, setJungTouched] = useState(initialData?.jungScores ? true : false);
 
   // Auto-save manual input progress
   useEffect(() => {
@@ -31,11 +30,12 @@ export default function ManualInputPage({ onSubmit, onBack, initialData }) {
     ? [mbtiSelections[0], mbtiSelections[1], mbtiSelections[2], mbtiSelections[3]].join('')
     : null;
 
-  const canSubmit = mode === MODE_MBTI ? mbtiString !== null : jungTouched;
+  const jungAllNonZero = jungFunctions.every((fn) => jungScores[fn] > 0);
+  const canSubmit = mode === MODE_MBTI ? mbtiString !== null : jungAllNonZero;
 
   const handleJungChange = (fn, val) => {
     setJungScores((prev) => ({ ...prev, [fn]: val }));
-    setJungTouched(true);
+
   };
 
   const handleSubmit = () => {
@@ -111,14 +111,14 @@ export default function ManualInputPage({ onSubmit, onBack, initialData }) {
       </div>
 
       {/* Submit */}
-      <div className="px-6 pb-6">
+      <div className="flex justify-center pb-6">
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className={`w-full py-4 rounded-2xl font-semibold text-lg transition-all ${
+          className={`w-[331px] h-[50px] rounded-[12px] text-[16px] font-semibold transition-all ${
             canSubmit
-              ? 'bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white shadow-xl shadow-primary/25 active:scale-[0.98]'
-              : 'bg-bg-card text-text-secondary/50 cursor-not-allowed'
+              ? 'bg-[#494949] text-[#D1FFF0] active:scale-[0.98]'
+              : 'bg-[#d0d0d0] text-[#a0a0a0] cursor-not-allowed'
           }`}
         >
           下一步

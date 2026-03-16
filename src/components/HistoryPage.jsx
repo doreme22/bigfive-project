@@ -43,12 +43,10 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
 
       <div className="flex-1 flex flex-col items-center pt-3 pb-5">
         {history.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64 text-center">
-            <svg className="w-16 h-16 text-text-secondary/20 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-text-secondary text-sm">暂无测评记录</p>
-            <p className="text-text-secondary/50 text-xs mt-1">完成一次测评后记录将出现在这里</p>
+          <div className="flex flex-col items-center justify-center flex-1 w-full text-center -mt-12">
+            <img src="/EmptyInbox.png" alt="暂无记录" className="w-[250px] h-[200px] -mb-[30px]" />
+            <p className="text-text-secondary text-[16px]">暂无测评记录</p>
+            <p className="text-text-secondary/50 text-[14px] mt-1">完成一次测评后记录将出现在这里</p>
           </div>
         ) : (
           <div className="w-[343px] flex flex-col gap-5">
@@ -87,7 +85,6 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
                         未上传简历
                       </span>
                     )}
-                    <span className="text-xs text-primary">查看详情 →</span>
                   </div>
                 </div>
               </button>
