@@ -261,7 +261,7 @@ export default function App({ autoStage }) {
       });
 
       // Save to history
-      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType);
+      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType, state.jungScores);
       const historyData = {
         assessmentType: state.assessmentType || 'bfi',
         bfiScores: state.bfiScores,
@@ -288,7 +288,7 @@ export default function App({ autoStage }) {
       console.error('Report generation failed:', err);
 
       // Still save history with available data
-      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType);
+      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType, state.jungScores);
       const failedData = {
         assessmentType: state.assessmentType || 'bfi',
         bfiScores: state.bfiScores,
@@ -328,7 +328,7 @@ export default function App({ autoStage }) {
       });
 
       // Save to history (without resume/report)
-      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType);
+      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType, state.jungScores);
       addHistoryRecord({
         assessmentType: state.assessmentType || 'bfi',
         bfiScores: state.bfiScores,
