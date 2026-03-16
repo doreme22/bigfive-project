@@ -1,14 +1,6 @@
 import { useState } from 'react';
-import { loadQuizProgress, clearQuizProgress } from '../utils/storage';
+import { loadQuizProgress, clearQuizProgress, loadManualProgress, clearManualProgress } from '../utils/storage';
 import ModalOverlay from './ui/ModalOverlay';
-
-function loadInitialProgress() {
-  const progress = loadQuizProgress();
-  if (progress && progress.shuffledIds && progress.shuffledIds.length > 0) {
-    return progress;
-  }
-  return null;
-}
 
 const dimensionLabels = [
   { text: '宜人性', left: '54.6%', top: '24.4%' },
@@ -18,24 +10,93 @@ const dimensionLabels = [
   { text: '开放性', left: '63.4%', top: '60.8%' },
 ];
 
-export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onRestoreProgress, onBack, suppressRestore }) {
-  const [savedProgress, setSavedProgress] = useState(loadInitialProgress);
-  const [showRestoreModal, setShowRestoreModal] = useState(() => !suppressRestore && loadInitialProgress() !== null);
+export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onRestoreProgress, onRestoreManual, onRestoreManualToResume, onBack }) {
+  const [pendingAction, setPendingAction] = useState(null); // 'quiz' | 'manual'
+  const [cachedProgress, setCachedProgress] = useState(null);
 
-  const handleRestore = () => {
-    setShowRestoreModal(false);
-    onRestoreProgress(savedProgress);
+  const handleQuizClick = () => {
+    const progress = loadQuizProgress();
+    if (progress && progress.shuffledIds && progress.shuffledIds.length > 0) {
+      setPendingAction('quiz');
+      setCachedProgress(progress);
+    } else {
+      onStart();
+    }
   };
 
-  const handleDiscardProgress = () => {
-    clearQuizProgress();
-    setSavedProgress(null);
-    setShowRestoreModal(false);
+  const handleManualClick = () => {
+    const progress = loadManualProgress();
+    if (progress) {
+      setPendingAction('manual');
+      setCachedProgress(progress);
+    } else {
+      onGoManualInput();
+    }
   };
 
-  const answeredCount = savedProgress ? Object.keys(savedProgress.answers || {}).length : 0;
-  const totalCount = savedProgress ? (savedProgress.shuffledIds || []).length : 44;
-  const allAnswered = answeredCount >= totalCount && totalCount > 0;
+  const handleConfirm = () => {
+    if (pendingAction === 'quiz') {
+      onRestoreProgress(cachedProgress);
+    } else if (pendingAction === 'manual') {
+      if (cachedProgress.completed) {
+        onRestoreManualToResume(cachedProgress);
+      } else {
+        onRestoreManual(cachedProgress);
+      }
+    }
+    setPendingAction(null);
+    setCachedProgress(null);
+  };
+
+  const handleCancel = () => {
+    if (pendingAction === 'quiz') {
+      clearQuizProgress();
+      setPendingAction(null);
+      setCachedProgress(null);
+      onStart();
+    } else if (pendingAction === 'manual') {
+      clearManualProgress();
+      setPendingAction(null);
+      setCachedProgress(null);
+      onGoManualInput();
+    }
+  };
+
+  // Compute modal content based on pending action
+  let modalTitle = '';
+  let modalBody = null;
+  let confirmText = '';
+
+  if (pendingAction === 'quiz' && cachedProgress) {
+    const answeredCount = Object.keys(cachedProgress.answers || {}).length;
+    const totalCount = (cachedProgress.shuffledIds || []).length || 44;
+    const allAnswered = answeredCount >= totalCount && totalCount > 0;
+
+    if (allAnswered) {
+      modalTitle = '检测到已完成的测评';
+      modalBody = <p>上次测评已完成答题，还未上传简历生成报告。是否继续？</p>;
+      confirmText = '继续上传简历';
+    } else {
+      modalTitle = '检测到未完成的测评';
+      modalBody = (
+        <>
+          <p>上次测评未完成，已完成 {answeredCount}/{totalCount} 题。</p>
+          <p className="mt-1">是否继续上次的进度？</p>
+        </>
+      );
+      confirmText = '继续答题';
+    }
+  } else if (pendingAction === 'manual' && cachedProgress) {
+    if (cachedProgress.completed) {
+      modalTitle = '检测到已完成的输入';
+      modalBody = <p>已完成人格数据输入，还未上传简历生成报告。是否继续？</p>;
+      confirmText = '继续上传简历';
+    } else {
+      modalTitle = '检测到之前的输入数据';
+      modalBody = <p>检测到之前的输入数据，是否继续填写？</p>;
+      confirmText = '继续填写';
+    }
+  }
 
   return (
     <div className="welcome-page relative min-h-[100dvh]">
@@ -114,13 +175,13 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
         style={{ paddingLeft: '16.5%', paddingRight: '16.5%', marginTop: '-30%' }}
       >
         <button
-          onClick={onStart}
+          onClick={handleQuizClick}
           className="w-full h-[50px] rounded-full bg-[#494949] flex items-center justify-center active:scale-[0.98] transition-transform"
         >
           <span className="text-[16px] font-semibold text-[#d1fff0]">开始测试</span>
         </button>
         <button
-          onClick={onGoManualInput}
+          onClick={handleManualClick}
           className="w-full h-[50px] rounded-full flex items-center justify-center gap-0.5"
         >
           <span className="text-[16px] font-semibold text-[#7b838d]">已有MBTI / 荣格八维？</span>
@@ -131,22 +192,15 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
       </div>
 
       {/* Progress restore modal */}
-      {showRestoreModal && (
+      {pendingAction && (
         <ModalOverlay
-          title={allAnswered ? '检测到已完成的测评' : '检测到未完成的测评'}
-          onConfirm={handleRestore}
-          onCancel={handleDiscardProgress}
-          confirmText={allAnswered ? '继续上传简历' : '继续答题'}
+          title={modalTitle}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+          confirmText={confirmText}
           cancelText="重新开始"
         >
-          {allAnswered ? (
-            <p>上次测评已完成答题，还未上传简历生成报告。是否继续？</p>
-          ) : (
-            <>
-              <p>上次测评未完成，已完成 {answeredCount}/{totalCount} 题。</p>
-              <p className="mt-1">是否继续上次的进度？</p>
-            </>
-          )}
+          {modalBody}
         </ModalOverlay>
       )}
     </div>

@@ -1,6 +1,7 @@
 // localStorage keys
 const KEYS = {
   QUIZ_PROGRESS: 'bfi_quiz_progress',
+  MANUAL_PROGRESS: 'bfi_manual_progress',
   HISTORY: 'bfi_history',
   RESUME_CACHE: 'bfi_resume_cache',
 };
@@ -38,6 +39,43 @@ export function loadQuizProgress() {
 export function clearQuizProgress() {
   try {
     localStorage.removeItem(KEYS.QUIZ_PROGRESS);
+  } catch {
+    // ignore
+  }
+}
+
+// --- Manual Input Progress ---
+
+export function saveManualProgress({ mode, mbtiSelections, jungScores, completed, mbtiType, jungScoresResult }) {
+  const data = {
+    mode,
+    mbtiSelections,
+    jungScores,
+    completed,
+    mbtiType,
+    jungScoresResult,
+    timestamp: Date.now(),
+  };
+  try {
+    localStorage.setItem(KEYS.MANUAL_PROGRESS, JSON.stringify(data));
+  } catch {
+    // storage full or unavailable
+  }
+}
+
+export function loadManualProgress() {
+  try {
+    const raw = localStorage.getItem(KEYS.MANUAL_PROGRESS);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+export function clearManualProgress() {
+  try {
+    localStorage.removeItem(KEYS.MANUAL_PROGRESS);
   } catch {
     // ignore
   }
@@ -112,11 +150,11 @@ export function getCachedResume() {
   }
 }
 
-export function setCachedResume(text, source) {
+export function setCachedResume(text, source, sourceType = 'manual_input') {
   try {
     localStorage.setItem(
       KEYS.RESUME_CACHE,
-      JSON.stringify({ text, source, timestamp: Date.now() }),
+      JSON.stringify({ text, source, sourceType, timestamp: Date.now() }),
     );
   } catch {
     // ignore
