@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { options } from '../data/questions';
 import ModalOverlay from './ui/ModalOverlay';
 
@@ -8,6 +8,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
   const [selected, setSelected] = useState(currentAnswer || null);
   const [showExitModal, setShowExitModal] = useState(false);
   const progress = ((index) / total) * 100;
+  const pendingTimeout = useRef(null);
 
   useEffect(() => {
     setSelected(currentAnswer || null);
@@ -18,7 +19,9 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
   const handleSelect = (value) => {
     setSelected(value);
     if (!isLast) {
-      setTimeout(() => {
+      if (pendingTimeout.current) clearTimeout(pendingTimeout.current);
+      pendingTimeout.current = setTimeout(() => {
+        pendingTimeout.current = null;
         onAnswer(question.id, value);
       }, 200);
     }
@@ -119,11 +122,11 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
             <button
               onClick={() => {
                 if (selected) {
-                  if (isLast) {
-                    onAnswer(question.id, selected);
-                  } else {
-                    handleSelect(selected);
+                  if (pendingTimeout.current) {
+                    clearTimeout(pendingTimeout.current);
+                    pendingTimeout.current = null;
                   }
+                  onAnswer(question.id, selected);
                 }
               }}
               disabled={!selected}

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PageHeader from './ui/PageHeader';
 import MBTISelector from './ui/MBTISelector';
 import JungSlider from './ui/JungSlider';
-import { saveManualProgress } from '../utils/storage';
+import { saveManualProgress, loadManualProgress } from '../utils/storage';
 
 const jungFunctions = ['Ti', 'Te', 'Fi', 'Fe', 'Ni', 'Ne', 'Si', 'Se'];
 
@@ -11,10 +11,11 @@ const defaultJung = { Ti: 0, Te: 0, Fi: 0, Fe: 0, Ni: 0, Ne: 0, Si: 0, Se: 0 };
 const MODE_MBTI = 'mbti';
 const MODE_JUNG = 'jung';
 
-export default function ManualInputPage({ onSubmit, onBack, initialData }) {
-  const [mode, setMode] = useState(initialData?.mode || MODE_MBTI);
-  const [mbtiSelections, setMbtiSelections] = useState(initialData?.mbtiSelections || {});
-  const [jungScores, setJungScores] = useState(initialData?.jungScores || defaultJung);
+export default function ManualInputPage({ onSubmit, onBack }) {
+  const [restored] = useState(() => loadManualProgress());
+  const [mode, setMode] = useState(restored?.mode || MODE_MBTI);
+  const [mbtiSelections, setMbtiSelections] = useState(restored?.mbtiSelections || {});
+  const [jungScores, setJungScores] = useState(restored?.jungScores || defaultJung);
 
   // Auto-save manual input progress
   useEffect(() => {

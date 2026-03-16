@@ -15,7 +15,7 @@ import { calculateScores } from './utils/scoring';
 import { generateReport, generateJobTypeRecommendations, generateGrowthSuggestions } from './utils/api';
 import { mergePersonalityData, generatePersonalityTag } from './utils/personality';
 import { getMatchingJobs, pickRandomJobs } from './data/jobs';
-import { saveQuizProgress, clearQuizProgress, saveManualProgress, clearManualProgress, addHistoryRecord, updateHistoryRecord } from './utils/storage';
+import { saveQuizProgress, clearQuizProgress, clearManualProgress, addHistoryRecord, updateHistoryRecord } from './utils/storage';
 import ModalOverlay from './components/ui/ModalOverlay';
 
 const STAGE = {
@@ -51,7 +51,6 @@ const initialState = {
   selectedJobId: null,
   previousStage: null,
   supplementingRecordId: null,
-  manualInitialData: null,
   selectedAttachment: null,
   draftResumeText: '',
   draftImportSource: '',
@@ -102,22 +101,6 @@ function reducer(state, action) {
         shuffled: action.payload.shuffled,
         answers: action.payload.answers,
         bfiScores: action.payload.bfiScores,
-      };
-
-    case 'RESTORE_MANUAL':
-      return {
-        ...state,
-        manualInitialData: action.payload,
-        stage: STAGE.MANUAL_INPUT,
-      };
-
-    case 'RESTORE_MANUAL_TO_RESUME':
-      return {
-        ...state,
-        mbtiType: action.payload.mbtiType || null,
-        jungScores: action.payload.jungScoresResult || null,
-        assessmentType: 'manual',
-        stage: STAGE.RESUME,
       };
 
     case 'ANSWER_QUESTION': {
@@ -219,6 +202,7 @@ export default function App({ autoStage }) {
     stage: autoStage === 'resume' ? STAGE.RESUME : initialState.stage,
   });
   const [showSyncModal, setShowSyncModal] = useState(false);
+  const [showExitResumeModal, setShowExitResumeModal] = useState(false);
 
   // Save quiz progress on every answer
   useEffect(() => {
@@ -227,16 +211,6 @@ export default function App({ autoStage }) {
       saveQuizProgress(shuffledIds, state.currentIndex, state.answers);
     }
   }, [state.stage, state.currentIndex, state.answers, state.shuffled]);
-
-  // Save manual input completed state when reaching resume page via manual path
-  useEffect(() => {
-    if (state.stage === STAGE.RESUME && state.mbtiType && !state.bfiScores) {
-      saveManualProgress({ completed: true, mbtiType: state.mbtiType, jungScoresResult: null });
-    }
-    if (state.stage === STAGE.RESUME && state.jungScores && !state.bfiScores) {
-      saveManualProgress({ completed: true, mbtiType: null, jungScoresResult: state.jungScores });
-    }
-  }, [state.stage, state.mbtiType, state.jungScores, state.bfiScores]);
 
   const handleStart = useCallback(() => {
     dispatch({ type: 'START_QUIZ' });
@@ -434,11 +408,12 @@ export default function App({ autoStage }) {
       {state.stage === STAGE.WELCOME && (
         <WelcomePage
           onStart={handleStart}
-          onGoManualInput={() => dispatch({ type: 'SET_STAGE', payload: STAGE.MANUAL_INPUT })}
+          onGoManualInput={() => {
+            clearManualProgress();
+            dispatch({ type: 'SET_STAGE', payload: STAGE.MANUAL_INPUT });
+          }}
           onGoHistory={() => dispatch({ type: 'SET_STAGE', payload: STAGE.HISTORY })}
           onRestoreProgress={handleRestoreProgress}
-          onRestoreManual={(data) => dispatch({ type: 'RESTORE_MANUAL', payload: data })}
-          onRestoreManualToResume={(data) => dispatch({ type: 'RESTORE_MANUAL_TO_RESUME', payload: data })}
           onBack={() => {
             if (state.resumeText) setShowSyncModal(true);
             dispatch({ type: 'SET_STAGE', payload: STAGE.HOME });
@@ -461,8 +436,10 @@ export default function App({ autoStage }) {
       {state.stage === STAGE.MANUAL_INPUT && (
         <ManualInputPage
           onSubmit={handleManualSubmit}
-          onBack={() => dispatch({ type: 'SET_STAGE', payload: STAGE.WELCOME })}
-          initialData={state.manualInitialData}
+          onBack={() => {
+            clearManualProgress();
+            dispatch({ type: 'SET_STAGE', payload: STAGE.WELCOME });
+          }}
         />
       )}
 
@@ -473,10 +450,8 @@ export default function App({ autoStage }) {
           onBack={() => {
             if (state.assessmentType === 'manual') {
               dispatch({ type: 'SET_STAGE', payload: STAGE.MANUAL_INPUT });
-            } else if (state.bfiScores) {
-              dispatch({ type: 'SET_STAGE', payload: STAGE.WELCOME });
             } else {
-              dispatch({ type: 'SET_STAGE', payload: STAGE.WELCOME });
+              setShowExitResumeModal(true);
             }
           }}
           onGoAttachments={(text, source) => {
@@ -536,6 +511,21 @@ export default function App({ autoStage }) {
           jobId={state.selectedJobId}
           onBack={() => dispatch({ type: 'SET_STAGE', payload: state.previousStage || STAGE.RESULT })}
         />
+      )}
+
+      {showExitResumeModal && (
+        <ModalOverlay
+          title="确定退出吗？"
+          onConfirm={() => {
+            setShowExitResumeModal(false);
+            dispatch({ type: 'SET_STAGE', payload: STAGE.WELCOME });
+          }}
+          onCancel={() => setShowExitResumeModal(false)}
+          confirmText="确定退出"
+          cancelText="继续上传"
+        >
+          <p>答题进度已保存，下次可继续上传简历。</p>
+        </ModalOverlay>
       )}
 
       {showSyncModal && (
