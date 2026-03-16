@@ -5,7 +5,6 @@ import {
   PolarAngleAxis,
   PolarRadiusAxis,
   ResponsiveContainer,
-  Legend,
   Tooltip,
 } from 'recharts';
 import { dimensionNames, norms } from '../data/questions';
@@ -14,11 +13,11 @@ const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="glass rounded-xl px-3 py-2 text-xs">
-        <p className="font-semibold text-text-primary mb-1">{data.fullName}</p>
-        <p className="text-primary-light">你的得分: {data.score}</p>
-        <p className="text-text-secondary">常模参考: {data.norm}</p>
-        <p className={`font-medium ${data.score > data.norm ? 'text-green-400' : data.score < data.norm ? 'text-amber-400' : 'text-text-secondary'}`}>
+      <div className="bg-white rounded-xl px-3 py-2 text-xs shadow-sm border border-gray-100">
+        <p className="font-semibold text-gray-700 mb-1">{data.fullName}</p>
+        <p className="text-gray-500">你的得分: {data.score}</p>
+        <p className="text-gray-400">常模参考: {data.norm}</p>
+        <p className={`font-medium ${data.score > data.norm ? 'text-green-500' : data.score < data.norm ? 'text-amber-500' : 'text-gray-400'}`}>
           {data.score > data.norm ? '↑ 高于常模' : data.score < data.norm ? '↓ 低于常模' : '— 接近常模'}
           {' '}{Math.abs(data.score - data.norm).toFixed(2)}
         </p>
@@ -26,6 +25,43 @@ const CustomTooltip = ({ active, payload }) => {
     );
   }
   return null;
+};
+
+// Custom dot renderer for axis endpoints
+const renderPolarAngleAxisTick = ({ payload, x, y, cx, cy }) => {
+  const dotRadius = 5;
+  const dx = x - cx;
+  const dy = y - cy;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  // Move dot inward by 8px so it sits exactly on the outer circle
+  const dotDist = dist - 8;
+  const dotX = cx + (dx / dist) * dotDist;
+  const dotY = cy + (dy / dist) * dotDist;
+
+  // Label stays outside — top label (外向性) closer
+  const isTop = Math.abs(dy) > Math.abs(dx) && dy < 0;
+  const labelOffset = isTop ? 14 : 24;
+  const labelX = cx + (dx / dist) * (dist + labelOffset);
+  const labelY = cy + (dy / dist) * (dist + labelOffset);
+
+  return (
+    <g>
+      <circle cx={dotX} cy={dotY} r={dotRadius} fill="#F1F2F4" />
+      <text
+        x={labelX}
+        y={labelY}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="#BBC1C9"
+        fontSize={12}
+        fontFamily="PingFang SC, -apple-system, sans-serif"
+        letterSpacing={0.5}
+      >
+        {payload.value}
+      </text>
+    </g>
+  );
 };
 
 export default function RadarChartComponent({ scores }) {
@@ -40,38 +76,42 @@ export default function RadarChartComponent({ scores }) {
   return (
     <div className="w-full">
       <ResponsiveContainer width="100%" height={300}>
-        <RechartsRadarChart cx="50%" cy="50%" outerRadius="75%" data={data}>
-          <PolarGrid stroke="#d8e4d4" strokeDasharray="3 3" />
+        <RechartsRadarChart cx="50%" cy="50%" outerRadius="58%" data={data}>
+          <PolarGrid
+            stroke="#F1F2F4"
+            strokeWidth={1.5}
+            gridType="circle"
+          />
           <PolarAngleAxis
             dataKey="dimension"
-            tick={{ fill: '#6b7c72', fontSize: 12 }}
+            tick={renderPolarAngleAxisTick}
+            axisLine={false}
+            tickLine={false}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 5]}
-            tick={{ fill: '#a3b5a8', fontSize: 10 }}
             tickCount={6}
+            tick={false}
+            axisLine={false}
           />
           <Radar
             name="常模参考"
             dataKey="norm"
-            stroke="#a3b5a8"
-            fill="#a3b5a8"
+            stroke="#DDE2E8"
+            fill="#DDE2E8"
             fillOpacity={0.15}
-            strokeDasharray="5 5"
-            strokeWidth={2}
+            strokeDasharray="4 4"
+            strokeWidth={1.5}
           />
           <Radar
             name="你的得分"
             dataKey="score"
-            stroke="#22875e"
-            fill="#1a6b4a"
-            fillOpacity={0.25}
-            strokeWidth={2.5}
-            dot={{ r: 4, fill: '#22875e', stroke: '#fff', strokeWidth: 1 }}
-          />
-          <Legend
-            wrapperStyle={{ fontSize: '12px', color: '#6b7c72' }}
+            stroke="#BBC1C9"
+            fill="#BBC1C9"
+            fillOpacity={0.2}
+            strokeWidth={2}
+            dot={{ r: 4, fill: '#DDE2E8', stroke: '#F1F2F4', strokeWidth: 1 }}
           />
           <Tooltip content={<CustomTooltip />} />
         </RechartsRadarChart>
@@ -83,13 +123,13 @@ export default function RadarChartComponent({ scores }) {
           const diff = (scores[dim] || 0) - norms[dim];
           return (
             <div key={dim} className="text-center">
-              <div className="text-lg font-bold text-primary">
+              <div className="text-lg font-bold text-gray-600">
                 {(scores[dim] || 0).toFixed(1)}
               </div>
-              <div className="text-[10px] text-text-secondary mt-0.5">
+              <div className="text-[10px] text-[#BBC1C9] mt-0.5">
                 {dimensionNames[dim]}
               </div>
-              <div className={`text-[10px] mt-0.5 ${diff > 0 ? 'text-green-400' : diff < 0 ? 'text-amber-400' : 'text-text-secondary'}`}>
+              <div className={`text-[10px] mt-0.5 ${diff > 0 ? 'text-green-400' : diff < 0 ? 'text-amber-400' : 'text-gray-400'}`}>
                 {diff > 0 ? '+' : ''}{diff.toFixed(2)}
               </div>
             </div>
