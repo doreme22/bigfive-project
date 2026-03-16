@@ -107,11 +107,11 @@ export default function RadarChartComponent({ scores }) {
           <Radar
             name="你的得分"
             dataKey="score"
-            stroke="#BBC1C9"
-            fill="#BBC1C9"
-            fillOpacity={0.2}
+            stroke="#6FCDAE"
+            fill="#CEEEE2"
+            fillOpacity={0.3}
             strokeWidth={2}
-            dot={{ r: 4, fill: '#DDE2E8', stroke: '#F1F2F4', strokeWidth: 1 }}
+            dot={false}
           />
           <Tooltip content={<CustomTooltip />} />
         </RechartsRadarChart>
