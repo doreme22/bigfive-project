@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
-import PageHeader from './ui/PageHeader';
 import {
   getOnlineResume,
   getOnlineAttachments,
@@ -110,24 +109,42 @@ export default function ResumePage({
     }
   };
 
+  // Which source row is active
+  const isOnlineActive = importSource === '在线简历';
+  const isLocalActive = !!(importSource && /\.\w+$/.test(importSource));
+  const isAttachActive = !!(importSource && !isOnlineActive && !isLocalActive);
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#FBFBFB] relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] relative overflow-hidden">
       {/* Top gradient background */}
       <div
         className="absolute top-0 left-0 right-0 pointer-events-none z-0"
         style={{
           height: 275,
-          background: 'linear-gradient(180deg, rgba(142,241,205,0.5) 0%, rgba(255,255,255,0) 70%)',
+          background: 'linear-gradient(175deg, rgba(142,241,205,0.5) 5%, rgba(255,255,255,0) 61%)',
         }}
       />
 
-      <div className="relative z-10 [&>div]:bg-transparent">
-        <PageHeader title="上传你的简历" onBack={onBack} sticky={false} />
+      {/* Header: back arrow */}
+      <div className="relative z-10 safe-top px-4 py-[9px]">
+        <button onClick={onBack} className="w-6 h-6 flex items-center justify-center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M15 19L8 12L15 5" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
       </div>
 
-      <div className="flex-1 flex flex-col px-6 relative z-[1] mt-[12px]">
+      {/* Title + subtitle */}
+      <div className="relative z-10 px-4">
+        <h1 className="text-[32px] font-semibold text-black leading-[1.4]">上传你的简历</h1>
+        <p className="text-[14px] text-[#7b838d] mt-[10px] leading-[20px]">
+          AI将结合你的性格数据与职业经历生成一份专属的深度职场画像
+        </p>
+      </div>
 
-      <div className="animate-fade-in-up flex-1">
+      {/* Content */}
+      <div className="flex-1 flex flex-col px-4 relative z-[1] mt-[28px]">
+
         {/* Shared hidden file input */}
         <input
           ref={fileInputRef}
@@ -137,189 +154,160 @@ export default function ResumePage({
           onChange={(e) => { handleFileChange(e.target.files[0]); e.target.value = ''; }}
         />
 
-        {/* ================================================================
-            State B: picker — 有在线数据，选择来源卡片
-           ================================================================ */}
-        {displayState === 'picker' && (
-          <>
-            <div className="bg-bg-card rounded-2xl p-4 mb-4">
-              <h3 className="text-sm font-semibold text-text-primary mb-3">选择简历来源</h3>
-              <div className="space-y-2">
+        <div className="animate-fade-in-up flex-1 flex flex-col gap-[12px]">
+          {/* ================================================================
+              State B: picker — 有在线数据，选择来源卡片
+             ================================================================ */}
+          {displayState === 'picker' && (
+            <>
+              <div className="bg-white rounded-[12px] px-4 py-5 flex flex-col gap-[10px]">
+                <h3 className="text-[16px] font-semibold text-black">选择简历来源</h3>
+
                 {onlineResumeData && (
                   <button
                     onClick={handleImportOnlineResume}
-                    className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 active:bg-bg-dark transition-colors"
+                    className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] text-left ${
+                      isOnlineActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
+                    }`}
                   >
-                    <div className="flex items-center gap-2 text-left">
-                      <svg className="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                      </svg>
-                      <div>
-                        <span className="text-sm text-text-primary">使用在线简历内容</span>
-                        <p className="text-xs text-text-secondary mt-0.5">{onlineResumeData.name} · {onlineResumeData.title}</p>
-                      </div>
+                    <div className="flex items-center gap-1">
+                      <img src="/images/icon-resume-online.svg" alt="" className="w-5 h-5 shrink-0" style={isOnlineActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
+                      <span className="text-[14px] font-medium text-black">在线简历</span>
                     </div>
-                    <svg className="w-4 h-4 text-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
+                    <span className={`text-[14px] ${isOnlineActive ? 'text-black' : 'text-[#bbc1c9]'}`}>{onlineResumeData.name}·{onlineResumeData.title}</span>
                   </button>
                 )}
 
                 {hasAttachments && onGoAttachments && (
                   <button
                     onClick={() => onGoAttachments(resumeText, importSource)}
-                    className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 active:bg-bg-dark transition-colors"
+                    className={`w-full flex items-center px-3 py-5 rounded-[4px] text-left ${
+                      isAttachActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
+                    }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                      </svg>
-                      <span className="text-sm text-text-primary">从附件导入</span>
+                    <div className="flex items-center gap-1">
+                      <img src="/images/icon-resume-attachment.svg" alt="" className="w-5 h-5 shrink-0" style={isAttachActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
+                      <span className="text-[14px] font-medium text-black">附件导入</span>
                     </div>
-                    <svg className="w-4 h-4 text-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
                   </button>
                 )}
 
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={parsing}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 active:bg-bg-dark transition-colors"
+                  className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] text-left ${
+                    isLocalActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
+                  }`}
                 >
-                  <div className="flex items-center gap-2">
-                    <svg className="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                    </svg>
-                    {parsing
-                      ? <span className="text-sm text-text-secondary">正在解析...</span>
-                      : <div>
-                          <span className="text-sm text-text-primary">上传本地文件</span>
-                          <p className="text-xs text-text-secondary mt-0.5">支持 TXT、MD、DOC、PDF</p>
-                        </div>
-                    }
+                  <div className="flex items-center gap-1">
+                    {parsing ? (
+                      <svg className="w-5 h-5 text-black animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                    ) : (
+                      <img src="/images/icon-resume-local.svg" alt="" className="w-5 h-5 shrink-0" style={isLocalActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
+                    )}
+                    <span className="text-[14px] font-medium text-black">
+                      {parsing ? '正在解析...' : '本地文件'}
+                    </span>
                   </div>
-                  {parsing ? (
-                    <svg className="w-5 h-5 text-primary animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                  ) : (
-                    <svg className="w-4 h-4 text-text-secondary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
+                  {!parsing && (
+                    <span className={`text-[14px] ${isLocalActive ? 'text-black' : 'text-[#bbc1c9]'}`}>支持TXT、MD、DOC、PDF</span>
                   )}
                 </button>
               </div>
-            </div>
 
-            {/* Divider */}
-            <div className="flex items-center gap-3 my-4">
-              <div className="flex-1 h-px bg-border" />
-              <span className="text-xs text-text-secondary">或直接粘贴</span>
-              <div className="flex-1 h-px bg-border" />
-            </div>
-
-            {importSource && (
-              <div className="flex items-center gap-2 mb-2 px-1">
-                <svg className="w-4 h-4 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="text-xs text-text-secondary">
-                  已导入：<span className="text-primary">{importSource}</span>
-                </span>
+              <div className="flex items-center gap-3">
+                <div className="flex-1 h-px bg-[#e5e5e5]" />
+                <span className="text-xs text-[#bbc1c9]">或直接粘贴</span>
+                <div className="flex-1 h-px bg-[#e5e5e5]" />
               </div>
-            )}
 
-            <textarea
-              value={resumeText}
-              onChange={(e) => setResumeText(e.target.value)}
-              placeholder="在这里粘贴你的简历内容...&#10;&#10;包括：教育背景、工作经历、项目经验、技能特长等"
-              className="w-full h-48 bg-bg-card rounded-2xl p-4 text-sm text-text-primary placeholder-text-secondary/50 resize-none focus:outline-none transition-colors"
-            />
-          </>
-        )}
+              <textarea
+                value={resumeText}
+                onChange={(e) => setResumeText(e.target.value)}
+                placeholder="在这里粘贴你的简历内容…&#10;&#10;包括：教育经历、工作经历、项目经验、技能特长等"
+                className="w-full h-[224px] bg-white rounded-[12px] px-4 py-5 text-[14px] text-black placeholder-[#bbc1c9] resize-none focus:outline-none scrollbar-hide"
+              />
+            </>
+          )}
 
-        {/* ================================================================
-            State C: empty — 无在线数据，大框上传 + 粘贴
-           ================================================================ */}
-        {displayState === 'empty' && (
-          <>
-            <div
-              className={`rounded-2xl p-8 text-center mb-4 transition-colors cursor-pointer ${
-                dragActive ? 'bg-primary/5' : 'bg-bg-card'
-              }`}
-              onClick={() => fileInputRef.current?.click()}
-              onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
-              onDragLeave={() => setDragActive(false)}
-              onDrop={handleDrop}
-            >
-              {parsing ? (
-                <div className="flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5 text-primary animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  <span className="text-sm text-text-secondary">正在解析...</span>
+          {/* ================================================================
+              State C: empty — 无在线数据，大框上传 + 粘贴
+             ================================================================ */}
+          {displayState === 'empty' && (
+            <>
+              <div className="bg-white rounded-[12px] px-4 py-5 flex flex-col gap-[10px]">
+                <h3 className="text-[16px] font-semibold text-black">选择简历来源</h3>
+
+                <div
+                  className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] cursor-pointer transition-colors ${
+                    dragActive ? 'bg-primary/5' : 'bg-[#f8fafc]'
+                  }`}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+                  onDragLeave={() => setDragActive(false)}
+                  onDrop={handleDrop}
+                >
+                  <div className="flex items-center gap-1">
+                    {parsing ? (
+                      <svg className="w-5 h-5 text-black animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                    ) : importSource ? (
+                      <svg className="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    ) : (
+                      <img src="/images/icon-resume-local.svg" alt="" className="w-5 h-5 shrink-0" />
+                    )}
+                    <span className="text-[14px] font-medium text-black">
+                      {parsing ? '正在解析...' : importSource ? importSource : '本地文件'}
+                    </span>
+                    {importSource && !parsing && (
+                      <span className="text-[10px] text-[#bbc1c9] ml-1">点击重新上传</span>
+                    )}
+                  </div>
+                  {!parsing && !importSource && (
+                    <span className="text-[14px] text-[#bbc1c9]">支持TXT、MD、DOC、PDF</span>
+                  )}
                 </div>
-              ) : importSource ? (
-                <div className="flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-sm text-primary">{importSource}</span>
-                  <span className="text-[10px] text-text-secondary/50 ml-1">点击重新上传</span>
-                </div>
-              ) : (
-                <>
-                  <svg className="w-12 h-12 text-text-secondary/30 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                  </svg>
-                  <p className="text-sm text-text-primary mb-1">点击上传简历文件</p>
-                  <p className="text-xs text-text-secondary/50">支持 TXT、MD、DOC、PDF</p>
-                </>
-              )}
-            </div>
+              </div>
 
-            {/* Divider */}
-            <div className="flex items-center gap-3 my-4">
-              <div className="flex-1 h-px bg-border" />
-              <span className="text-xs text-text-secondary">或直接粘贴</span>
-              <div className="flex-1 h-px bg-border" />
-            </div>
+              <textarea
+                value={resumeText}
+                onChange={(e) => setResumeText(e.target.value)}
+                placeholder="在这里粘贴你的简历内容…&#10;&#10;包括：教育经历、工作经历、项目经验、技能特长等"
+                className="w-full h-[224px] bg-white rounded-[12px] px-4 py-5 text-[14px] text-black placeholder-[#bbc1c9] resize-none focus:outline-none scrollbar-hide"
+              />
+            </>
+          )}
+        </div>
 
-            <textarea
-              value={resumeText}
-              onChange={(e) => setResumeText(e.target.value)}
-              placeholder="在这里粘贴你的简历内容...&#10;&#10;包括：教育背景、工作经历、项目经验、技能特长等"
-              className="w-full h-48 bg-bg-card rounded-2xl p-4 text-sm text-text-primary placeholder-text-secondary/50 resize-none focus:outline-none transition-colors"
-            />
-          </>
-        )}
-      </div>
-
-      {/* Buttons */}
-      <div className="mt-6 flex flex-col gap-3 items-center pb-6" style={{ paddingLeft: '10%', paddingRight: '10%' }}>
-        <button
-          onClick={() => onSubmit(resumeText)}
-          disabled={!resumeText.trim() || parsing}
-          className={`w-full h-[50px] rounded-full flex items-center justify-center transition-transform bg-[#494949] ${
-            resumeText.trim() && !parsing
-              ? 'active:scale-[0.98]'
-              : 'opacity-60 cursor-not-allowed'
-          }`}
-        >
-          <span className="text-[16px] font-semibold text-[#d1fff0]">生成 AI 分析报告</span>
-        </button>
-        {onSkip && (
+        {/* Buttons */}
+        <div className="mt-6 flex flex-col gap-3 items-center pb-6" style={{ paddingLeft: '6%', paddingRight: '6%' }}>
           <button
-            onClick={onSkip}
-            className="w-full h-[50px] rounded-full flex items-center justify-center"
+            onClick={() => onSubmit(resumeText)}
+            disabled={!resumeText.trim() || parsing}
+            className={`w-full h-[50px] rounded-full flex items-center justify-center transition-transform bg-[#494949] ${
+              resumeText.trim() && !parsing
+                ? 'active:scale-[0.98]'
+                : 'opacity-60 cursor-not-allowed'
+            }`}
           >
-            <span className="text-[16px] font-semibold text-[#7b838d]">跳过，仅查看测评结果</span>
+            <span className="text-[16px] font-semibold text-[#d1fff0]">生成 AI 分析报告</span>
           </button>
-        )}
-      </div>
+          {onSkip && (
+            <button
+              onClick={onSkip}
+              className="w-full h-[50px] rounded-full flex items-center justify-center"
+            >
+              <span className="text-[16px] font-semibold text-[#7b838d]">跳过，仅查看测评结果</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
