@@ -32,9 +32,11 @@ export default function JungSlider({ label, value, onChange }) {
           inputMode="numeric"
           value={value}
           onChange={handleInput}
-          className="w-16 text-center text-[18px] font-medium text-[#00674D] bg-transparent outline-none leading-none"
+          className={`w-16 text-center text-[18px] font-medium bg-transparent outline-none leading-none ${
+            value === 0 ? 'text-[#7B838D]' : 'text-[#00674D]'
+          }`}
         />
-        <div className="w-16 h-[2px] bg-[#00674D] mt-0.5" />
+        <div className="w-16 h-[2px] mt-0.5 bg-[#00674D]" />
       </div>
     </div>
   );
