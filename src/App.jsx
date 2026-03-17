@@ -451,7 +451,7 @@ export default function App({ autoStage }) {
       {state.stage === STAGE.RESUME && (
         <ResumePage
           onSubmit={handleResumeSubmit}
-          onSkip={state.assessmentType !== 'manual' ? handleSkip : null}
+          onSkip={state.resumeFromStage !== STAGE.MANUAL_INPUT && state.assessmentType !== 'manual' ? handleSkip : null}
           onBack={() => {
             const from = state.resumeFromStage;
             if (from === STAGE.MANUAL_INPUT) {
