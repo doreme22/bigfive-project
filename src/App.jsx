@@ -103,6 +103,9 @@ function reducer(state, action) {
         answers: action.payload.answers,
         bfiScores: action.payload.bfiScores,
         resumeFromStage: STAGE.WELCOME,
+        draftResumeText: '',
+        draftImportSource: '',
+        selectedAttachment: null,
       };
 
     case 'ANSWER_QUESTION': {
@@ -118,6 +121,9 @@ function reducer(state, action) {
         bfiScores,
         stage: STAGE.RESUME,
         resumeFromStage: STAGE.QUIZ,
+        draftResumeText: '',
+        draftImportSource: '',
+        selectedAttachment: null,
       };
     }
 
@@ -133,6 +139,9 @@ function reducer(state, action) {
         supplementingRecordId: null,
         stage: STAGE.RESUME,
         resumeFromStage: STAGE.MANUAL_INPUT,
+        draftResumeText: '',
+        draftImportSource: '',
+        selectedAttachment: null,
       };
 
     case 'SET_RESUME':
@@ -161,7 +170,7 @@ function reducer(state, action) {
       return { ...state, stage: STAGE.RESULT };
 
     case 'GO_RESUME_FROM_RESULT':
-      return { ...state, stage: STAGE.RESUME, resumeFromStage: STAGE.RESULT, supplementingRecordId: null, report: '', jobTypeRecs: [], growthSuggestions: [] };
+      return { ...state, stage: STAGE.RESUME, resumeFromStage: STAGE.RESULT, supplementingRecordId: null, report: '', jobTypeRecs: [], growthSuggestions: [], draftResumeText: '', draftImportSource: '', selectedAttachment: null };
 
     case 'GO_RESUME_FROM_HISTORY':
       return {
@@ -176,6 +185,9 @@ function reducer(state, action) {
         growthSuggestions: [],
         stage: STAGE.RESUME,
         resumeFromStage: STAGE.HISTORY_DETAIL,
+        draftResumeText: '',
+        draftImportSource: '',
+        selectedAttachment: null,
       };
 
     case 'SELECT_HISTORY':
