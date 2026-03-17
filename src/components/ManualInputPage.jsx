@@ -82,9 +82,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
         {mode === MODE_MBTI && (
           <div className="animate-fade-in mt-6">
             <p className="text-xs text-text-secondary mb-3">选择你的四个维度偏好</p>
-            <div className="glass rounded-2xl p-4">
-              <MBTISelector value={mbtiSelections} onChange={setMbtiSelections} />
-            </div>
+            <MBTISelector value={mbtiSelections} onChange={setMbtiSelections} />
           </div>
         )}
 
