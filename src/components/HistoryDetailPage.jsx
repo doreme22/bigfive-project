@@ -62,6 +62,11 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
       ? [{ key: 'test', label: '测评结果' }, { key: 'report', label: '深度报告' }]
       : [{ key: 'test', label: '测评结果' }];
 
+  const [isScrolled, setIsScrolled] = useState(false);
+  const handleScroll = useCallback((e) => {
+    setIsScrolled(e.target.scrollTop > 0);
+  }, []);
+
   const showTestTab = activeTab === 'test' && scores;
 
   return (
@@ -78,21 +83,23 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
       {/* Fixed header + tabs */}
       <div className="relative z-10 flex-shrink-0 [&>div]:bg-transparent">
         <PageHeader title="历史报告" onBack={onBack} sticky={false} />
-        <div className="px-6 py-3 flex gap-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                activeTab === tab.key
-                  ? 'bg-primary text-white'
-                  : 'bg-bg-card text-text-secondary'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        {tabs.length > 1 && (
+          <div className="px-6 py-3 flex gap-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+                  activeTab === tab.key
+                    ? 'bg-primary text-white'
+                    : 'bg-bg-card text-text-secondary'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Scrollable content area */}
@@ -104,8 +111,17 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
           </div>
 
           {/* Score details — scrollable card that pulls up */}
-          <div className="flex-1 overflow-y-auto px-6">
-            <div className="bg-white rounded-t-[12px] p-5 min-h-full">
+          <div className="relative flex-1 overflow-hidden">
+            <div
+              className="absolute top-0 left-0 right-0 z-10 pointer-events-none transition-opacity duration-300"
+              style={{
+                height: 40,
+                background: 'linear-gradient(180deg, #FBFBFB 0%, rgba(251,251,251,0) 100%)',
+                opacity: isScrolled ? 1 : 0,
+              }}
+            />
+            <div className="h-full overflow-y-auto px-6 scrollbar-hide" onScroll={handleScroll}>
+            <div className="py-5 min-h-full">
               <TestResultsTab scores={scores} section="details" />
 
               {!hasReport && onGoResume && (
@@ -120,6 +136,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
                   <p className="text-xs text-text-secondary">结合简历生成职场画像、岗位推荐与成长建议</p>
                 </button>
               )}
+            </div>
             </div>
           </div>
         </div>
