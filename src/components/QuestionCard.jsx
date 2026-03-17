@@ -90,10 +90,11 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
                     key={opt.value}
                     onClick={() => handleSelect(opt.value)}
 
-                    className={`w-full flex gap-3 items-start p-5 rounded-[4px] text-left transition-all duration-200 ${
+                    style={{ touchAction: 'manipulation', WebkitTapHighlightColor: 'transparent' }}
+                    className={`w-full flex gap-3 items-start p-5 rounded-[4px] text-left ${
                       isSelected
                         ? 'bg-[#EBFAF5] ring-1 ring-[#009688]'
-                        : 'bg-[#f8fafc] active:bg-[#f0f2f4]'
+                        : 'bg-[#f8fafc]'
                     }`}
                   >
                     <span className="text-[16px] font-semibold text-black shrink-0">{optionLetters[i]}、</span>
