@@ -34,9 +34,9 @@ function useJobRotation(scores, jungScores, mbtiType) {
 
 export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoResume }) {
   const record = getHistoryRecord(recordId);
-  const isManual = record?.assessmentType === 'manual';
+  const isManualType = record?.assessmentType === 'mbti' || record?.assessmentType === 'jung';
   const hasReport = !!record?.report;
-  const [activeTab, setActiveTab] = useState(isManual ? 'report' : 'test');
+  const [activeTab, setActiveTab] = useState(isManualType ? 'report' : 'test');
 
   const scores = record ? mergePersonalityData(record.bfiScores, record.jungScores, record.mbtiType) : null;
   const [displayedJobs, refreshJobs] = useJobRotation(
@@ -56,7 +56,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
     );
   }
 
-  const tabs = isManual
+  const tabs = isManualType
     ? [{ key: 'report', label: '深度报告' }]
     : hasReport
       ? [{ key: 'test', label: '测评结果' }, { key: 'report', label: '深度报告' }]
@@ -153,7 +153,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
             />
           )}
 
-          {activeTab === 'report' && !hasReport && isManual && (
+          {activeTab === 'report' && !hasReport && isManualType && (
             <div className="animate-fade-in p-6 text-center">
               <svg className="w-12 h-12 text-text-secondary/40 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />

@@ -41,9 +41,9 @@ export default function ManualInputPage({ onSubmit, onBack }) {
 
   const handleSubmit = () => {
     if (mode === MODE_MBTI) {
-      onSubmit(mbtiString, null);
+      onSubmit(mbtiString, null, 'mbti');
     } else {
-      onSubmit(null, jungScores);
+      onSubmit(null, jungScores, 'jung');
     }
   };
 

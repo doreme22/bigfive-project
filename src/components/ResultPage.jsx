@@ -16,21 +16,21 @@ export default function ResultPage({
   onBack,
 }) {
   const hasReport = !!report;
-  const isManual = assessmentType === 'manual';
+  const isManualType = assessmentType === 'mbti' || assessmentType === 'jung';
 
-  const tabs = isManual
+  const tabs = isManualType
     ? [{ key: 'report', label: '深度报告' }]
     : hasReport
       ? [{ key: 'test', label: '测评结果' }, { key: 'report', label: '深度报告' }]
       : [{ key: 'test', label: '测评结果' }];
 
-  const [activeTab, setActiveTab] = useState(isManual ? 'report' : 'test');
+  const [activeTab, setActiveTab] = useState(isManualType ? 'report' : 'test');
 
   const tagParts = [];
   if (mbtiType) tagParts.push(mbtiType);
   if (assessmentType === 'bfi') tagParts.push('BFI 实测');
-  else if (assessmentType === 'manual') tagParts.push('手动输入');
-  else if (assessmentType === 'both') tagParts.push('综合测评');
+  else if (assessmentType === 'mbti') tagParts.push('MBTI');
+  else if (assessmentType === 'jung') tagParts.push('荣格八维');
 
   const [isScrolled, setIsScrolled] = useState(false);
   const handleScroll = useCallback((e) => {
@@ -122,7 +122,7 @@ export default function ResultPage({
             />
           )}
 
-          {activeTab === 'report' && !hasReport && isManual && (
+          {activeTab === 'report' && !hasReport && isManualType && (
             <div className="animate-fade-in p-6 text-center">
               <svg className="w-12 h-12 text-text-secondary/40 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />

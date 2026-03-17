@@ -34,7 +34,7 @@ const STAGE = {
 
 const initialState = {
   stage: STAGE.HOME,
-  assessmentType: null, // 'bfi' | 'manual' | 'both'
+  assessmentType: null, // 'bfi' | 'mbti' | 'jung'
   shuffled: [],
   currentIndex: 0,
   answers: {},
@@ -129,7 +129,7 @@ function reducer(state, action) {
         ...state,
         mbtiType: action.payload.mbtiType,
         jungScores: action.payload.jungScores,
-        assessmentType: state.bfiScores ? 'both' : 'manual',
+        assessmentType: action.payload.mode, // 'mbti' or 'jung'
         supplementingRecordId: null,
         stage: STAGE.RESUME,
         resumeFromStage: STAGE.MANUAL_INPUT,
@@ -229,28 +229,34 @@ export default function App({ autoStage }) {
     dispatch({ type: 'GO_BACK' });
   }, []);
 
-  const handleManualSubmit = useCallback((mbtiType, jungScores) => {
-    dispatch({ type: 'SET_MANUAL_INPUT', payload: { mbtiType, jungScores } });
+  const handleManualSubmit = useCallback((mbtiType, jungScores, mode) => {
+    dispatch({ type: 'SET_MANUAL_INPUT', payload: { mbtiType, jungScores, mode } });
   }, []);
 
   const handleResumeSubmit = useCallback(async (resumeText) => {
     dispatch({ type: 'SET_RESUME', payload: resumeText });
     dispatch({ type: 'START_LOADING' });
 
-    const effectiveScores = mergePersonalityData(state.bfiScores, state.jungScores, state.mbtiType);
+    // Only use data matching the current assessmentType
+    const isBfi = state.assessmentType === 'bfi';
+    const isMbti = state.assessmentType === 'mbti';
+    const isJung = state.assessmentType === 'jung';
+    const effectiveScores = isBfi ? mergePersonalityData(state.bfiScores, null, null) : null;
+    const effectiveJung = isJung ? state.jungScores : null;
+    const effectiveMbti = isMbti ? state.mbtiType : null;
 
     try {
       // Run report generation and structured API calls
       const reportPromise = generateReport(
         effectiveScores,
-        state.jungScores,
-        state.mbtiType,
+        effectiveJung,
+        effectiveMbti,
         resumeText,
         (partial) => dispatch({ type: 'SET_REPORT', payload: partial }),
       );
 
-      const jobRecsPromise = generateJobTypeRecommendations(effectiveScores, state.jungScores, resumeText);
-      const growthPromise = generateGrowthSuggestions(effectiveScores, state.jungScores, resumeText);
+      const jobRecsPromise = generateJobTypeRecommendations(effectiveScores, effectiveJung, resumeText);
+      const growthPromise = generateGrowthSuggestions(effectiveScores, effectiveJung, resumeText);
 
       const [finalReport, jobRecs, growthSugs] = await Promise.all([reportPromise, jobRecsPromise, growthPromise]);
 
@@ -258,15 +264,19 @@ export default function App({ autoStage }) {
       dispatch({ type: 'SET_GROWTH_SUGGESTIONS', payload: growthSugs });
 
       // Generate initial displayed jobs
-      const matched = getMatchingJobs(effectiveScores, state.jungScores, state.mbtiType);
+      const matched = getMatchingJobs(effectiveScores, effectiveJung, effectiveMbti);
       const picked = pickRandomJobs(matched, 3);
       dispatch({
         type: 'SET_DISPLAYED_JOBS',
         payload: { jobs: picked, excludedIds: picked.map((j) => j.id) },
       });
 
-      // Save to history
-      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType, state.jungScores);
+      // Save to history — only pass data matching the current assessmentType
+      const personalityTag = generatePersonalityTag(
+        state.assessmentType === 'bfi' ? effectiveScores : null,
+        state.assessmentType === 'mbti' ? state.mbtiType : null,
+        state.assessmentType === 'jung' ? state.jungScores : null,
+      );
       const historyData = {
         assessmentType: state.assessmentType || 'bfi',
         bfiScores: state.bfiScores,
@@ -293,7 +303,11 @@ export default function App({ autoStage }) {
       console.error('Report generation failed:', err);
 
       // Still save history with available data
-      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType, state.jungScores);
+      const personalityTag = generatePersonalityTag(
+        state.assessmentType === 'bfi' ? effectiveScores : null,
+        state.assessmentType === 'mbti' ? state.mbtiType : null,
+        state.assessmentType === 'jung' ? state.jungScores : null,
+      );
       const failedData = {
         assessmentType: state.assessmentType || 'bfi',
         bfiScores: state.bfiScores,
@@ -322,10 +336,10 @@ export default function App({ autoStage }) {
     clearQuizProgress();
     clearManualProgress();
 
-    // Still generate displayed jobs if we have scores
-    const effectiveScores = mergePersonalityData(state.bfiScores, state.jungScores, state.mbtiType);
+    // Still generate displayed jobs if we have scores (skip only available for BFI)
+    const effectiveScores = mergePersonalityData(state.bfiScores, null, null);
     if (effectiveScores) {
-      const matched = getMatchingJobs(effectiveScores, state.jungScores, state.mbtiType);
+      const matched = getMatchingJobs(effectiveScores, null, null);
       const picked = pickRandomJobs(matched, 3);
       dispatch({
         type: 'SET_DISPLAYED_JOBS',
@@ -333,7 +347,11 @@ export default function App({ autoStage }) {
       });
 
       // Save to history (without resume/report)
-      const personalityTag = generatePersonalityTag(effectiveScores, state.mbtiType, state.jungScores);
+      const personalityTag = generatePersonalityTag(
+        state.assessmentType === 'bfi' ? effectiveScores : null,
+        state.assessmentType === 'mbti' ? state.mbtiType : null,
+        state.assessmentType === 'jung' ? state.jungScores : null,
+      );
       addHistoryRecord({
         assessmentType: state.assessmentType || 'bfi',
         bfiScores: state.bfiScores,
@@ -352,12 +370,15 @@ export default function App({ autoStage }) {
   }, [state.bfiScores, state.jungScores, state.mbtiType, state.assessmentType]);
 
   const handleRefreshJobs = useCallback(() => {
-    const effectiveScores = mergePersonalityData(state.bfiScores, state.jungScores, state.mbtiType);
-    const matched = getMatchingJobs(effectiveScores, state.jungScores, state.mbtiType, state.excludedJobIds);
+    const isBfi = state.assessmentType === 'bfi';
+    const effectiveScores = isBfi ? mergePersonalityData(state.bfiScores, null, null) : null;
+    const effectiveJung = state.assessmentType === 'jung' ? state.jungScores : null;
+    const effectiveMbti = state.assessmentType === 'mbti' ? state.mbtiType : null;
+    const matched = getMatchingJobs(effectiveScores, effectiveJung, effectiveMbti, state.excludedJobIds);
     let picked = pickRandomJobs(matched, 3);
     if (picked.length === 0) {
       // Reset excluded and try again
-      const allMatched = getMatchingJobs(effectiveScores, state.jungScores, state.mbtiType);
+      const allMatched = getMatchingJobs(effectiveScores, effectiveJung, effectiveMbti);
       picked = pickRandomJobs(allMatched, 3);
       dispatch({
         type: 'SET_DISPLAYED_JOBS',
@@ -451,7 +472,7 @@ export default function App({ autoStage }) {
       {state.stage === STAGE.RESUME && (
         <ResumePage
           onSubmit={handleResumeSubmit}
-          onSkip={state.resumeFromStage !== STAGE.MANUAL_INPUT && state.assessmentType !== 'manual' ? handleSkip : null}
+          onSkip={state.assessmentType === 'bfi' ? handleSkip : null}
           onBack={() => {
             const from = state.resumeFromStage;
             if (from === STAGE.MANUAL_INPUT) {
@@ -485,7 +506,7 @@ export default function App({ autoStage }) {
         <LoadingPage />
       )}
 
-      {state.stage === STAGE.RESULT && (effectiveScores || state.assessmentType === 'manual') && (
+      {state.stage === STAGE.RESULT && (effectiveScores || state.assessmentType === 'mbti' || state.assessmentType === 'jung') && (
         <ResultPage
           scores={effectiveScores}
           mbtiType={state.mbtiType}
