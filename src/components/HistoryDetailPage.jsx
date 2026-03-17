@@ -76,7 +76,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
         className="absolute top-0 left-0 right-0 pointer-events-none z-0"
         style={{
           height: 275,
-          background: 'linear-gradient(180deg, rgba(142,241,205,0.5) 0%, rgba(142,241,205,0) 100%)',
+          background: 'linear-gradient(180deg, rgba(142,241,205,0.5) 0%, rgba(255,255,255,0) 70%)',
         }}
       />
 
@@ -84,7 +84,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
       <div className="relative z-10 flex-shrink-0 [&>div]:bg-transparent">
         <PageHeader title="历史报告" onBack={onBack} sticky={false} />
         {tabs.length > 1 && (
-          <div className="px-6 py-3 flex gap-2">
+          <div className="px-6 py-[12px] flex gap-2">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
