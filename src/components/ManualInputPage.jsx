@@ -81,7 +81,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
         {/* MBTI Section */}
         {mode === MODE_MBTI && (
           <div className="animate-fade-in mt-6">
-            <p className="text-xs text-text-secondary mb-3">选择你的四个维度偏好</p>
+            <p className="text-xs text-black mb-3">选择你的四个维度偏好</p>
             <MBTISelector value={mbtiSelections} onChange={setMbtiSelections} />
           </div>
         )}
@@ -89,8 +89,8 @@ export default function ManualInputPage({ onSubmit, onBack }) {
         {/* Jung Section */}
         {mode === MODE_JUNG && (
           <div className="animate-fade-in mt-6">
-            <p className="text-xs text-text-secondary mb-3">拖动滑条调整各功能强度（0-100）</p>
-            <div className="glass rounded-2xl p-4 space-y-4">
+            <p className="text-xs text-black mb-3">输入各功能强度（0-100）</p>
+            <div className="space-y-[16px] px-[28px]">
               {jungFunctions.map((fn) => (
                 <JungSlider
                   key={fn}
@@ -104,7 +104,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
         )}
 
         {/* Hint */}
-        <p className="text-xs text-text-secondary/50 text-center mt-4">
+        <p className="text-xs text-[#BBC1C9] text-center mt-4">
           选择一种输入方式，将结合简历生成 AI 深度报告
         </p>
       </div>
