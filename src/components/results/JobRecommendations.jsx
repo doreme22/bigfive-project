@@ -2,7 +2,7 @@ import JobCard from '../ui/JobCard';
 
 export default function JobRecommendations({ jobTypeRecs, displayedJobs, onRefreshJobs, onSelectJob }) {
   return (
-    <div className="bg-white rounded-[12px] border border-[#F1F2F4] p-6 mb-4">
+    <div className="mb-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
