@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import PageHeader from './ui/PageHeader';
 import * as pdfjsLib from 'pdfjs-dist';
 import {
   getOnlineResume,
@@ -125,25 +126,20 @@ export default function ResumePage({
         }}
       />
 
-      {/* Header: back arrow */}
-      <div className="relative z-10 safe-top px-4 py-[9px]">
-        <button onClick={onBack} className="w-6 h-6 flex items-center justify-center">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <path d="M15 19L8 12L15 5" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
+      {/* Header */}
+      <div className="relative z-10 [&>div]:bg-transparent">
+        <PageHeader title="上传你的简历" onBack={onBack} sticky={false} />
       </div>
 
-      {/* Title + subtitle */}
+      {/* Subtitle */}
       <div className="relative z-10 px-4">
-        <h1 className="text-[32px] font-semibold text-black leading-[1.4]">上传你的简历</h1>
-        <p className="text-[14px] text-[#7b838d] mt-[10px] leading-[20px]">
+        <p className="text-[14px] text-[#7b838d] leading-[20px]">
           AI将结合你的性格数据与职业经历生成一份专属的深度职场画像
         </p>
       </div>
 
       {/* Content */}
-      <div className="flex-1 flex flex-col px-4 relative z-[1] mt-[28px]">
+      <div className="flex-1 flex flex-col px-4 relative z-[1] mt-[12px]">
 
         {/* Shared hidden file input */}
         <input
