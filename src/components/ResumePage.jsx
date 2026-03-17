@@ -111,10 +111,21 @@ export default function ResumePage({
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FBFBFB]">
-      <PageHeader title="上传你的简历" onBack={onBack} />
+    <div className="min-h-screen flex flex-col bg-[#FBFBFB] relative overflow-hidden">
+      {/* Top gradient background */}
+      <div
+        className="absolute top-0 left-0 right-0 pointer-events-none z-0"
+        style={{
+          height: 275,
+          background: 'linear-gradient(180deg, rgba(142,241,205,0.5) 0%, rgba(255,255,255,0) 70%)',
+        }}
+      />
 
-      <div className="flex-1 flex flex-col px-6">
+      <div className="relative z-10 [&>div]:bg-transparent">
+        <PageHeader title="上传你的简历" onBack={onBack} sticky={false} />
+      </div>
+
+      <div className="flex-1 flex flex-col px-6 relative z-[1] mt-[12px]">
 
       <div className="animate-fade-in-up flex-1">
         {/* Shared hidden file input */}
@@ -131,13 +142,13 @@ export default function ResumePage({
            ================================================================ */}
         {displayState === 'picker' && (
           <>
-            <div className="bg-bg-card border border-border rounded-2xl p-4 mb-4">
+            <div className="bg-bg-card rounded-2xl p-4 mb-4">
               <h3 className="text-sm font-semibold text-text-primary mb-3">选择简历来源</h3>
               <div className="space-y-2">
                 {onlineResumeData && (
                   <button
                     onClick={handleImportOnlineResume}
-                    className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 border border-border/50 active:bg-bg-dark transition-colors"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 active:bg-bg-dark transition-colors"
                   >
                     <div className="flex items-center gap-2 text-left">
                       <svg className="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -157,7 +168,7 @@ export default function ResumePage({
                 {hasAttachments && onGoAttachments && (
                   <button
                     onClick={() => onGoAttachments(resumeText, importSource)}
-                    className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 border border-border/50 active:bg-bg-dark transition-colors"
+                    className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 active:bg-bg-dark transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <svg className="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -174,7 +185,7 @@ export default function ResumePage({
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={parsing}
-                  className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 border border-border/50 active:bg-bg-dark transition-colors"
+                  className="w-full flex items-center justify-between p-3 rounded-xl bg-bg-dark/50 active:bg-bg-dark transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     <svg className="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -224,7 +235,7 @@ export default function ResumePage({
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}
               placeholder="在这里粘贴你的简历内容...&#10;&#10;包括：教育背景、工作经历、项目经验、技能特长等"
-              className="w-full h-48 bg-bg-card border border-border rounded-2xl p-4 text-sm text-text-primary placeholder-text-secondary/50 resize-none focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full h-48 bg-bg-card rounded-2xl p-4 text-sm text-text-primary placeholder-text-secondary/50 resize-none focus:outline-none transition-colors"
             />
           </>
         )}
@@ -235,8 +246,8 @@ export default function ResumePage({
         {displayState === 'empty' && (
           <>
             <div
-              className={`border-2 border-dashed rounded-2xl p-8 text-center mb-4 transition-colors cursor-pointer ${
-                dragActive ? 'border-primary bg-primary/5' : 'border-border'
+              className={`rounded-2xl p-8 text-center mb-4 transition-colors cursor-pointer ${
+                dragActive ? 'bg-primary/5' : 'bg-bg-card'
               }`}
               onClick={() => fileInputRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
@@ -281,7 +292,7 @@ export default function ResumePage({
               value={resumeText}
               onChange={(e) => setResumeText(e.target.value)}
               placeholder="在这里粘贴你的简历内容...&#10;&#10;包括：教育背景、工作经历、项目经验、技能特长等"
-              className="w-full h-48 bg-bg-card border border-border rounded-2xl p-4 text-sm text-text-primary placeholder-text-secondary/50 resize-none focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full h-48 bg-bg-card rounded-2xl p-4 text-sm text-text-primary placeholder-text-secondary/50 resize-none focus:outline-none transition-colors"
             />
           </>
         )}
