@@ -49,7 +49,7 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
             <p className="text-text-secondary/50 text-[14px] mt-1">完成一次测评后记录将出现在这里</p>
           </div>
         ) : (
-          <div className="w-[343px] flex flex-col gap-5">
+          <div className="w-full px-4 flex flex-col gap-5">
             {history.map((record) => (
               <button
                 key={record.id}
