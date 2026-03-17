@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
+import PageHeader from './ui/PageHeader';
 import {
   getOnlineResume,
   getOnlineAttachments,
@@ -110,31 +111,10 @@ export default function ResumePage({
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col px-6 py-8 bg-bg-dark">
-      {/* Header */}
-      <div className="animate-fade-in-up text-center mb-8">
-        {onBack && (
-          <button
-            onClick={onBack}
-            className="absolute left-4 top-8 p-2 text-text-secondary active:text-text-primary transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1a6b4a] to-[#22875e] flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-          </svg>
-        </div>
-        <h1 className="text-2xl font-bold mb-2">上传你的简历</h1>
-        <p className="text-text-secondary text-sm leading-relaxed">
-          AI 将结合你的性格数据与职业经历
-          <br />
-          生成一份专属的深度职场画像
-        </p>
-      </div>
+    <div className="min-h-screen flex flex-col bg-[#FBFBFB]">
+      <PageHeader title="上传你的简历" onBack={onBack} />
+
+      <div className="flex-1 flex flex-col px-6">
 
       <div className="animate-fade-in-up flex-1">
         {/* Shared hidden file input */}
@@ -308,26 +288,27 @@ export default function ResumePage({
       </div>
 
       {/* Buttons */}
-      <div className="animate-fade-in-up mt-6 space-y-3" style={{ animationDelay: '0.3s' }}>
+      <div className="mt-6 flex flex-col gap-3 items-center pb-6" style={{ paddingLeft: '10%', paddingRight: '10%' }}>
         <button
           onClick={() => onSubmit(resumeText)}
           disabled={!resumeText.trim() || parsing}
-          className={`w-full py-4 rounded-2xl font-semibold text-lg transition-all ${
+          className={`w-full h-[50px] rounded-full flex items-center justify-center transition-transform bg-[#494949] ${
             resumeText.trim() && !parsing
-              ? 'bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white shadow-xl shadow-primary/25 active:scale-[0.98]'
-              : 'bg-bg-card text-text-secondary/50 cursor-not-allowed'
+              ? 'active:scale-[0.98]'
+              : 'opacity-60 cursor-not-allowed'
           }`}
         >
-          生成 AI 分析报告
+          <span className="text-[16px] font-semibold text-[#d1fff0]">生成 AI 分析报告</span>
         </button>
         {onSkip && (
           <button
             onClick={onSkip}
-            className="w-full py-3 rounded-2xl text-text-secondary text-sm active:bg-bg-card transition-colors"
+            className="w-full h-[50px] rounded-full flex items-center justify-center"
           >
-            跳过，仅查看测评结果
+            <span className="text-[16px] font-semibold text-[#7b838d]">跳过，仅查看测评结果</span>
           </button>
         )}
+      </div>
       </div>
     </div>
   );

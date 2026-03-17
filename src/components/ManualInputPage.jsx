@@ -116,10 +116,10 @@ export default function ManualInputPage({ onSubmit, onBack }) {
         <button
           onClick={handleSubmit}
           disabled={!canSubmit}
-          className={`w-[331px] h-[50px] rounded-[12px] text-[16px] font-semibold transition-all ${
+          className={`w-[331px] h-[50px] rounded-[12px] text-[16px] font-semibold transition-all bg-[#494949] text-[#D1FFF0] ${
             canSubmit
-              ? 'bg-[#494949] text-[#D1FFF0] active:scale-[0.98]'
-              : 'bg-[#d0d0d0] text-[#a0a0a0] cursor-not-allowed'
+              ? 'active:scale-[0.98]'
+              : 'opacity-60 cursor-not-allowed'
           }`}
         >
           下一步
