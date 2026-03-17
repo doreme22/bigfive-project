@@ -53,28 +53,42 @@ export default function ManualInputPage({ onSubmit, onBack }) {
 
       <div className="flex-1 px-6 pb-8 overflow-y-auto">
         {/* Mode toggle */}
-        <div className="animate-fade-in-up mt-4 flex gap-2">
+        <div className="animate-fade-in-up mt-[12px] flex gap-5 justify-center">
           <button
             onClick={() => setMode(MODE_MBTI)}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all ${
+            className={`relative w-[134px] h-[48px] rounded-[12px] text-[16px] transition-all border overflow-hidden ${
               mode === MODE_MBTI
-                ? 'bg-primary text-white'
-                : 'bg-bg-card text-text-secondary border border-border'
+                ? 'bg-white border-[#008B68] text-[#008B68] font-semibold'
+                : 'bg-white border-[#D9D9D9] text-black font-normal'
             }`}
           >
-            <span className="w-6 h-6 rounded-md bg-white/20 flex items-center justify-center text-xs font-bold">M</span>
-            MBTI 类型
+            MBTI
+            {mode === MODE_MBTI && (
+              <span className="absolute bottom-0 right-0">
+                <svg width="23" height="16" viewBox="0 0 23 16" fill="none">
+                  <path d="M3.17996 6.7492C4.56803 2.71119 8.3669 0 12.6368 0H23V4C23 10.6274 17.6274 16 11 16H0L3.17996 6.7492Z" fill="#008B68" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M8.93994 8.96919C8.64392 8.64626 8.64392 8.15061 8.93994 7.82768C9.27471 7.46248 9.85045 7.46248 10.1852 7.82768L10.7084 8.39844C11.3245 9.07051 12.384 9.07051 13.0001 8.39844L15.8149 5.32768C16.1497 4.96248 16.7255 4.96248 17.0602 5.32768C17.3562 5.65061 17.3562 6.14626 17.0602 6.46919L13.3286 10.5401C12.5359 11.4048 11.1726 11.4048 10.3799 10.5401L8.93994 8.96919Z" fill="white" stroke="white" strokeWidth="0.583333" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            )}
           </button>
           <button
             onClick={() => setMode(MODE_JUNG)}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all ${
+            className={`relative w-[134px] h-[48px] rounded-[12px] text-[16px] transition-all border overflow-hidden ${
               mode === MODE_JUNG
-                ? 'bg-primary text-white'
-                : 'bg-bg-card text-text-secondary border border-border'
+                ? 'bg-white border-[#008B68] text-[#008B68] font-semibold'
+                : 'bg-white border-[#D9D9D9] text-black font-normal'
             }`}
           >
-            <span className="w-6 h-6 rounded-md bg-white/20 flex items-center justify-center text-xs font-bold">J</span>
             荣格八维
+            {mode === MODE_JUNG && (
+              <span className="absolute bottom-0 right-0">
+                <svg width="23" height="16" viewBox="0 0 23 16" fill="none">
+                  <path d="M3.17996 6.7492C4.56803 2.71119 8.3669 0 12.6368 0H23V4C23 10.6274 17.6274 16 11 16H0L3.17996 6.7492Z" fill="#008B68" />
+                  <path fillRule="evenodd" clipRule="evenodd" d="M8.93994 8.96919C8.64392 8.64626 8.64392 8.15061 8.93994 7.82768C9.27471 7.46248 9.85045 7.46248 10.1852 7.82768L10.7084 8.39844C11.3245 9.07051 12.384 9.07051 13.0001 8.39844L15.8149 5.32768C16.1497 4.96248 16.7255 4.96248 17.0602 5.32768C17.3562 5.65061 17.3562 6.14626 17.0602 6.46919L13.3286 10.5401C12.5359 11.4048 11.1726 11.4048 10.3799 10.5401L8.93994 8.96919Z" fill="white" stroke="white" strokeWidth="0.583333" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            )}
           </button>
         </div>
 
