@@ -49,19 +49,27 @@ export default function BestBattlefieldSection({
       {/* Job cards */}
       {displayedJobs && displayedJobs.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs text-text-secondary">为你精选的岗位</p>
-            <button
-              onClick={onRefreshJobs}
-              className="flex items-center gap-1 text-xs text-primary active:text-primary-light transition-colors"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
-              </svg>
-              换一换
-            </button>
+          {/* 标题区：白色背景 + 左侧绿色竖条 */}
+          <div className="bg-white rounded-t-lg pt-3 pb-4 pr-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-5 bg-[#00674D] rounded-r-lg" />
+                <h3 className="text-base font-medium text-black">为你精选的岗位</h3>
+              </div>
+              <button
+                onClick={onRefreshJobs}
+                className="flex items-center gap-1 text-sm text-[#7B838D] active:text-gray-500 transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                  <path d="M4.3335 7.00001H11.6668L8.60801 4.33334" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M11.6665 8.99999L4.33317 8.99999L7.39199 11.6667" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                换一换
+              </button>
+            </div>
           </div>
-          <div className="space-y-3">
+          {/* 岗位卡片列表 */}
+          <div className="bg-white rounded-b-lg pb-3 px-4 space-y-2.5">
             {displayedJobs.map((job) => (
               <JobCard key={job.id} job={job} onClick={onSelectJob} />
             ))}

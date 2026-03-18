@@ -54,8 +54,27 @@ export default function JobRecommendations({ jobTypeRecs, displayedJobs, onRefre
       {/* Mock job cards */}
       {displayedJobs.length > 0 && (
         <div>
-          <p className="text-xs text-text-secondary mb-2">为你精选的岗位</p>
-          <div className="space-y-3">
+          {/* 标题区：白色背景 + 左侧绿色竖条 */}
+          <div className="bg-white rounded-t-lg pt-3 pb-4 pr-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-5 bg-[#00674D] rounded-r-lg" />
+                <h3 className="text-base font-medium text-black">为你精选的岗位</h3>
+              </div>
+              <button
+                onClick={onRefreshJobs}
+                className="flex items-center gap-1 text-sm text-[#7B838D] active:text-gray-500 transition-colors"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 16 16" fill="none">
+                  <path d="M4.3335 7.00001H11.6668L8.60801 4.33334" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M11.6665 8.99999L4.33317 8.99999L7.39199 11.6667" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                换一换
+              </button>
+            </div>
+          </div>
+          {/* 岗位卡片列表 */}
+          <div className="bg-white rounded-b-lg pb-3 px-4 space-y-2.5">
             {displayedJobs.map((job) => (
               <JobCard key={job.id} job={job} onClick={onSelectJob} />
             ))}
