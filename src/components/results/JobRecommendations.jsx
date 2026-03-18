@@ -74,7 +74,7 @@ export default function JobRecommendations({ jobTypeRecs, displayedJobs, onRefre
             </div>
           </div>
           {/* 岗位卡片列表 */}
-          <div className="bg-white rounded-b-lg pb-3 px-4 space-y-2.5">
+          <div className="bg-white rounded-b-lg pb-4 px-4 space-y-2.5">
             {displayedJobs.map((job) => (
               <JobCard key={job.id} job={job} onClick={onSelectJob} />
             ))}

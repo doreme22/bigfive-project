@@ -24,7 +24,7 @@ export default function GrowthEngineSection({ report, growthSuggestions }) {
       </div>
 
       {/* 内容区 */}
-      <div className="bg-white rounded-b-lg pb-3 px-4">
+      <div className="bg-white rounded-b-lg pb-4 px-4">
         {suggestions.length > 0 ? (
           <div className="space-y-6">
             {suggestions.map((suggestion, i) => {
