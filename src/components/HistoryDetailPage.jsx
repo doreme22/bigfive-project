@@ -141,7 +141,7 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
           </div>
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto px-6 relative z-[1]">
+        <div className="flex-1 overflow-y-auto px-6 pb-[35px] relative z-[1] scrollbar-hide">
           {activeTab === 'report' && hasReport && (
             <DeepReportTab
               report={record.report || ''}

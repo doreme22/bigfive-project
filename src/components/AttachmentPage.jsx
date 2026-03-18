@@ -98,7 +98,7 @@ export default function AttachmentPage({ onBack, onSelect }) {
       <PageHeader title="附件管理" onBack={onBack} />
 
       {/* Content */}
-      <div className="flex-1 px-4 pb-24 overflow-y-auto">
+      <div className="flex-1 px-4 pb-24 overflow-y-auto scrollbar-hide">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <svg className="w-6 h-6 text-primary animate-spin" fill="none" viewBox="0 0 24 24">

@@ -51,7 +51,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
     <div className="min-h-screen flex flex-col bg-[#FBFBFB]">
       <PageHeader title="输入人格数据" onBack={onBack} />
 
-      <div className="flex-1 px-6 pb-8 overflow-y-auto">
+      <div className="flex-1 px-6 pb-8 overflow-y-auto scrollbar-hide">
         {/* Mode toggle */}
         <div className="animate-fade-in-up mt-[12px] flex gap-5 justify-center">
           <button
