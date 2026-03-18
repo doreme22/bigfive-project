@@ -32,7 +32,7 @@ export default function CoreProfileSection({ report }) {
                         <div key={j} className="flex gap-2">
                           {/* 左侧：编号 + 竖线 */}
                           <div className="flex flex-col items-center shrink-0 w-5">
-                            <span className="text-[13px] text-[#BBC1C9] font-medium leading-[18px]">{String(j + 1).padStart(2, '0')}</span>
+                            <span className="text-[13px] text-[#BBC1C9] font-medium leading-[18px] italic">{String(j + 1).padStart(2, '0')}</span>
                             {j < items.length - 1 && (
                               <div className="w-[0.5px] flex-1 bg-[#DDE2E8] my-1" />
                             )}
