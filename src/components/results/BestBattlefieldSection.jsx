@@ -17,38 +17,40 @@ export default function BestBattlefieldSection({
 
   return (
     <div className="mb-4">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
-          <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.58-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-          </svg>
+      {/* 标题区：白色背景 + 左侧绿色竖条 */}
+      <div className="bg-white rounded-t-lg pt-3 pb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-5 bg-[#00674D] rounded-r-lg" />
+          <h3 className="text-base font-medium text-black">最佳战场</h3>
         </div>
-        <h3 className="text-base font-bold text-text-primary">最佳战场</h3>
       </div>
 
-      {/* AI report sub-sections */}
-      {subs.length > 1 ? (
-        <div className="space-y-3 mb-4">
-          {subs.map((sub, i) => {
-            return (
-              <div key={i} className="rounded-xl p-4 bg-bg-dark/50">
-                <h4 className="text-sm font-semibold mb-2 text-text-primary">{sub.title}</h4>
-                <div className="report-content text-sm">
+      {/* 内容区 */}
+      <div className="bg-white rounded-b-lg pb-4 px-4">
+        {/* AI report sub-sections */}
+        {subs.length > 1 ? (
+          <div className="space-y-6">
+            {subs.map((sub, i) => (
+              <div key={i}>
+                <div className="mb-1">
+                  <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{sub.title}</span>
+                </div>
+                <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
                   <Markdown>{sub.content}</Markdown>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      ) : section ? (
-        <div className="report-content mb-4">
-          <Markdown>{section}</Markdown>
-        </div>
-      ) : null}
+            ))}
+          </div>
+        ) : section ? (
+          <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
+            <Markdown>{section}</Markdown>
+          </div>
+        ) : null}
+      </div>
 
       {/* Job cards */}
       {displayedJobs && displayedJobs.length > 0 && (
-        <div>
+        <div className="mt-4">
           {/* 标题区：白色背景 + 左侧绿色竖条 */}
           <div className="bg-white rounded-t-lg pt-3 pb-4 pr-4">
             <div className="flex items-center justify-between">
@@ -69,7 +71,7 @@ export default function BestBattlefieldSection({
             </div>
           </div>
           {/* 岗位卡片列表 */}
-          <div className="bg-white rounded-b-lg pb-3 px-4 space-y-2.5">
+          <div className="bg-white rounded-b-lg pb-4 px-4 space-y-2.5">
             {displayedJobs.map((job) => (
               <JobCard key={job.id} job={job} onClick={onSelectJob} />
             ))}

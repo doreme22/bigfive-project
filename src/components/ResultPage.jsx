@@ -54,7 +54,7 @@ export default function ResultPage({
       <div className="relative z-10 flex-shrink-0 [&>div]:bg-transparent">
         <PageHeader title="测评报告" onBack={onBack} sticky={false} />
         {tabs.length > 1 && (
-          <div className="px-6 py-[12px] flex gap-2">
+          <div className="px-6 pt-4 pb-6 flex gap-2">
             {tabs.map((tab) => (
               <button
                 key={tab.key}

@@ -9,38 +9,76 @@ export default function CoreProfileSection({ report }) {
 
   return (
     <div className="mb-4">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-          <svg className="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0" />
-          </svg>
+      {/* 标题区：白色背景 + 左侧绿色竖条 */}
+      <div className="bg-white rounded-t-lg pt-3 pb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-1 h-5 bg-[#00674D] rounded-r-lg" />
+          <h3 className="text-base font-medium text-black">核心画像</h3>
         </div>
-        <h3 className="text-base font-bold text-text-primary">核心画像</h3>
       </div>
 
-      {subs.length > 1 ? (
-        <div className="space-y-3">
-          {subs.map((sub, i) => {
-            return (
-              <div key={i} className="rounded-xl p-4 bg-bg-dark/50">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="w-2 h-2 rounded-full bg-primary" />
-                  <h4 className="text-sm font-semibold text-text-primary">{sub.title}</h4>
+      {/* 内容区 */}
+      <div className="bg-white rounded-b-lg pb-4 px-4">
+        {subs.length > 1 ? (
+          <div className="space-y-6">
+            {subs.map((sub, i) => {
+              const items = splitBoldItems(sub.content);
+              return (
+                <div key={i} className="flex flex-col gap-2">
+                  <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{sub.title}</span>
+                  {items.length > 0 ? (
+                    <div className="space-y-0">
+                      {items.map((item, j) => (
+                        <div key={j} className="flex gap-2">
+                          {/* 左侧：编号 + 竖线 */}
+                          <div className="flex flex-col items-center shrink-0 w-5">
+                            <span className="text-[13px] text-[#BBC1C9] font-medium leading-[18px]">{String(j + 1).padStart(2, '0')}</span>
+                            {j < items.length - 1 && (
+                              <div className="w-[0.5px] flex-1 bg-[#DDE2E8] my-1" />
+                            )}
+                          </div>
+                          {/* 右侧：内容 */}
+                          <div className={`flex-1 min-w-0 ${j < items.length - 1 ? 'pb-3' : ''}`}>
+                            <p className="text-[13px] font-medium text-black leading-[18px] tracking-[0.5px]">{item.title}</p>
+                            <p className="text-[13px] text-[#656D76] leading-[18px] tracking-[0.5px] mt-1">{item.desc}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
+                      <Markdown>{sub.content}</Markdown>
+                    </div>
+                  )}
                 </div>
-                <div className="report-content text-sm">
-                  <Markdown>{sub.content}</Markdown>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="report-content">
-          <Markdown>{section}</Markdown>
-        </div>
-      )}
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
+            <Markdown>{section}</Markdown>
+          </div>
+        )}
+      </div>
     </div>
   );
+}
+
+/**
+ * Split content like "**Title**：desc\n\n**Title2**：desc2" into [{title, desc}]
+ */
+function splitBoldItems(content) {
+  if (!content) return [];
+  const items = [];
+  const parts = content.split(/\n\n+/);
+  for (const part of parts) {
+    const trimmed = part.trim();
+    const match = trimmed.match(/^\*\*([^*]+)\*\*\s*[：:]\s*([\s\S]*)/);
+    if (match) {
+      items.push({ title: match[1], desc: match[2].trim() });
+    }
+  }
+  return items;
 }
 
 function extractSection(markdown, heading) {
