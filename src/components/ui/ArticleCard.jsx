@@ -1,6 +1,6 @@
 export default function ArticleCard({ article }) {
   return (
-    <div className="flex items-center bg-[#F1F2F4] rounded px-2 py-2.5 h-[54px] gap-3">
+    <div className="flex items-center rounded gap-3">
       <div className="flex items-center gap-2.5 min-w-0 flex-1">
         <div className="w-9 h-9 rounded bg-white flex-shrink-0 overflow-hidden">
           {article.cover && (
