@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import PageHeader from './ui/PageHeader';
 import TestResultsTab from './results/TestResultsTab';
 import DeepReportTab from './results/DeepReportTab';
+import WavyTabLine from './ui/WavyTabLine';
 
 export default function ResultPage({
   scores,
@@ -54,20 +55,23 @@ export default function ResultPage({
       <div className="relative z-10 flex-shrink-0 [&>div]:bg-transparent">
         <PageHeader title="测评报告" onBack={onBack} sticky={false} />
         {tabs.length > 1 && (
-          <div className="px-6 pt-4 pb-6 flex gap-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  activeTab === tab.key
-                    ? 'bg-primary text-white shadow-none'
-                    : 'bg-bg-card text-text-secondary'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="mb-3">
+            <div className="flex">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`flex-1 pt-3 pb-1 text-sm font-medium transition-all ${
+                    activeTab === tab.key
+                      ? 'text-primary'
+                      : 'text-[#7B838D]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <WavyTabLine activeIndex={tabs.findIndex(t => t.key === activeTab)} tabCount={tabs.length} />
           </div>
         )}
       </div>
