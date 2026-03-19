@@ -7,6 +7,7 @@ const optionLetters = ['A', 'B', 'C', 'D', 'E'];
 export default function QuestionCard({ question, index, total, onAnswer, onBack, onExit, currentAnswer }) {
   const [selected, setSelected] = useState(currentAnswer || null);
   const [showExitModal, setShowExitModal] = useState(false);
+  const [wentBack, setWentBack] = useState(false);
   const progress = ((index) / total) * 100;
   const pendingTimeout = useRef(null);
 
@@ -15,10 +16,12 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
   }, [question.id, currentAnswer]);
 
   const isLast = index === total - 1;
+  // Show next button only when went back (re-answering), or on last question
+  const showNext = isLast || wentBack;
 
   const handleSelect = (value) => {
     setSelected(value);
-    if (!isLast) {
+    if (!isLast && !wentBack) {
       if (pendingTimeout.current) clearTimeout(pendingTimeout.current);
       pendingTimeout.current = setTimeout(() => {
         pendingTimeout.current = null;
@@ -29,6 +32,7 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
 
   const handleBack = () => {
     if (index === 0) return;
+    setWentBack(true);
     onBack();
   };
 
@@ -120,26 +124,48 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
             ) : (
               <div />
             )}
-            <button
-              onClick={() => {
-                if (selected) {
-                  if (pendingTimeout.current) {
-                    clearTimeout(pendingTimeout.current);
-                    pendingTimeout.current = null;
-                  }
-                  onAnswer(question.id, selected);
-                }
-              }}
-              disabled={!selected}
-              className={`flex items-center gap-1 ${!selected ? 'opacity-30' : ''}`}
-            >
-              <span className="text-[14px] text-[#00674d] leading-[21px]">{isLast ? '完成' : '下一题'}</span>
-              {!isLast && (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="rotate-180">
-                  <path d="M10 4L6 8L10 12" stroke="#00674d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              )}
-            </button>
+            {showNext ? (
+              isLast ? (
+                <button
+                  onClick={() => {
+                    if (selected) {
+                      if (pendingTimeout.current) {
+                        clearTimeout(pendingTimeout.current);
+                        pendingTimeout.current = null;
+                      }
+                      setWentBack(false);
+                      onAnswer(question.id, selected);
+                    }
+                  }}
+                  disabled={!selected}
+                  className={`h-[36px] px-6 rounded-full bg-[#494949] flex items-center justify-center active:scale-[0.98] transition-transform ${!selected ? 'opacity-30' : ''}`}
+                >
+                  <span className="text-[14px] font-semibold text-[#d1fff0]">完成</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    if (selected) {
+                      if (pendingTimeout.current) {
+                        clearTimeout(pendingTimeout.current);
+                        pendingTimeout.current = null;
+                      }
+                      setWentBack(false);
+                      onAnswer(question.id, selected);
+                    }
+                  }}
+                  disabled={!selected}
+                  className={`flex items-center gap-1 ${!selected ? 'opacity-30' : ''}`}
+                >
+                  <span className="text-[14px] text-[#00674d] leading-[21px]">下一题</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="rotate-180">
+                    <path d="M10 4L6 8L10 12" stroke="#00674d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              )
+            ) : (
+              <div />
+            )}
           </div>
         </div>
       </div>
