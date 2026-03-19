@@ -45,8 +45,8 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
         {history.length === 0 ? (
           <div className="flex flex-col items-center justify-center flex-1 w-full text-center -mt-12">
             <img src="/EmptyInbox.png" alt="暂无记录" className="w-[250px] h-[200px] -mb-[30px]" />
-            <p className="text-text-secondary text-[16px]">暂无测评记录</p>
-            <p className="text-text-secondary/50 text-[14px] mt-1">完成一次测评后记录将出现在这里</p>
+            <p className="text-[#656D76] text-[16px]">暂无测评记录</p>
+            <p className="text-[#7B838D] text-[14px] mt-1">完成一次测评后记录将出现在这里</p>
           </div>
         ) : (
           <div className="w-full px-4 flex flex-col gap-3">
