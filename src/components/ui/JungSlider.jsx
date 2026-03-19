@@ -18,6 +18,16 @@ export default function JungSlider({ label, value, onChange }) {
     }
     const num = Math.min(100, Math.max(0, Number(raw)));
     onChange(num);
+    // 确保光标始终在末尾
+    requestAnimationFrame(() => {
+      const len = e.target.value.length;
+      e.target.setSelectionRange(len, len);
+    });
+  };
+
+  const handleClick = (e) => {
+    const len = e.target.value.length;
+    e.target.setSelectionRange(len, len);
   };
 
   return (
@@ -32,6 +42,8 @@ export default function JungSlider({ label, value, onChange }) {
           inputMode="numeric"
           value={value}
           onChange={handleInput}
+          onClick={handleClick}
+          onFocus={handleClick}
           className={`w-16 text-center text-[18px] font-medium bg-transparent outline-none leading-none ${
             value === 0 ? 'text-[#7B838D]' : 'text-[#00674D]'
           }`}
