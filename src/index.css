@@ -148,6 +148,28 @@ body {
   animation: spin-slow 8s linear infinite;
 }
 
+/* Loading page: two rings swap size + step-rotate 30° */
+@keyframes ring-a {
+  0%        { transform: rotate(0deg) scale(1); }
+  25%       { transform: rotate(30deg) scale(1); }
+  50%       { transform: rotate(30deg) scale(0.714); }
+  75%       { transform: rotate(0deg) scale(0.714); }
+  100%      { transform: rotate(0deg) scale(1); }
+}
+@keyframes ring-b {
+  0%        { transform: rotate(0deg) scale(0.714); }
+  25%       { transform: rotate(-30deg) scale(0.714); }
+  50%       { transform: rotate(-30deg) scale(1); }
+  75%       { transform: rotate(0deg) scale(1); }
+  100%      { transform: rotate(0deg) scale(0.714); }
+}
+.dots-ring-a {
+  animation: ring-a 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.dots-ring-b {
+  animation: ring-b 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
 }
