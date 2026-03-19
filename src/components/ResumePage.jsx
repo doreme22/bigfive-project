@@ -170,14 +170,18 @@ export default function ResumePage({
                       <img src="/images/icon-resume-online.svg" alt="" className="w-5 h-5 shrink-0" style={isOnlineActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
                       <span className="text-[14px] font-medium text-black">在线简历</span>
                     </div>
-                    <span className={`text-[14px] ${isOnlineActive ? 'text-black' : 'text-[#bbc1c9]'}`}>{onlineResumeData.name}·{onlineResumeData.title}</span>
+                    {onlineResumeData.name ? (
+                      <span className={`text-[14px] ${isOnlineActive ? 'text-black' : 'text-[#656D76]'}`}>{onlineResumeData.name}·{onlineResumeData.title}</span>
+                    ) : (
+                      <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
+                    )}
                   </button>
                 )}
 
                 {hasAttachments && onGoAttachments && (
                   <button
                     onClick={() => onGoAttachments(resumeText, importSource)}
-                    className={`w-full flex items-center px-3 py-5 rounded-[4px] text-left ${
+                    className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] text-left ${
                       isAttachActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
                     }`}
                   >
@@ -185,6 +189,7 @@ export default function ResumePage({
                       <img src="/images/icon-resume-attachment.svg" alt="" className="w-5 h-5 shrink-0" style={isAttachActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
                       <span className="text-[14px] font-medium text-black">附件导入</span>
                     </div>
+                    <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
                   </button>
                 )}
 
@@ -209,7 +214,7 @@ export default function ResumePage({
                     </span>
                   </div>
                   {!parsing && (
-                    <span className={`text-[14px] ${isLocalActive ? 'text-black' : 'text-[#bbc1c9]'}`}>支持TXT、MD、DOC、PDF</span>
+                    <span className={`text-[14px] ${isLocalActive ? 'text-black' : 'text-[#656D76]'}`}>支持TXT、MD、DOC、PDF</span>
                   )}
                 </button>
               </div>
