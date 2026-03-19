@@ -21,7 +21,7 @@ export default function CoreProfileSection({ report }) {
       <div className="bg-white rounded-b-lg pb-4 px-4">
         {subs.length > 1 ? (
           <div className="space-y-6">
-            {subs.map((sub, i) => {
+            {subs.filter(sub => sub.content && sub.content.trim()).map((sub, i) => {
               const items = splitBoldItems(sub.content);
               return (
                 <div key={i} className="flex flex-col gap-2">
