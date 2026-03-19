@@ -16,7 +16,7 @@ function ScoreBar({ dim, score }) {
               style={{ width: `${pct}%` }}
             />
             <div
-              className="absolute top-0 h-full w-[2px] bg-[#F2CFB4]"
+              className="absolute top-0 h-full w-[2px] bg-[#C5C9CE]"
               style={{ left: `${normPct}%` }}
             />
           </div>
@@ -26,7 +26,7 @@ function ScoreBar({ dim, score }) {
               <span className="text-[11px] text-[#BBC1C9]">5.0</span>
             </div>
             <span
-              className="absolute text-[11px] text-[#DEA57A] -translate-x-1/2"
+              className="absolute text-[11px] text-[#7B838D] -translate-x-1/2"
               style={{ left: `${normPct}%`, top: 0 }}
             >
               常模{norm}

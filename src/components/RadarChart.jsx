@@ -31,10 +31,10 @@ const createTickRenderer = (scoreMap, normMap) => ({ payload, x, y, cx, cy }) =>
   const diff = score != null && norm != null ? score - norm : null;
   const absDiff = diff != null ? Math.abs(diff).toFixed(2) : '';
   const arrowUp = (ax, ay) => (
-    <polygon points={`${ax},${ay - 4} ${ax + 3},${ay + 2} ${ax - 3},${ay + 2}`} fill="#DEA57A" />
+    <polygon points={`${ax},${ay - 4} ${ax + 3},${ay + 2} ${ax - 3},${ay + 2}`} fill="#7B838D" />
   );
   const arrowDown = (ax, ay) => (
-    <polygon points={`${ax},${ay + 4} ${ax + 3},${ay - 2} ${ax - 3},${ay - 2}`} fill="#DEA57A" />
+    <polygon points={`${ax},${ay + 4} ${ax + 3},${ay - 2} ${ax - 3},${ay - 2}`} fill="#7B838D" />
   );
 
   return (
@@ -60,7 +60,7 @@ const createTickRenderer = (scoreMap, normMap) => ({ payload, x, y, cx, cy }) =>
         fontFamily="PingFang SC, -apple-system, sans-serif"
       >
         <tspan fill="#00674D" fontSize={14} fontWeight={600}>{score != null ? score.toFixed(1) : ''}</tspan>
-        <tspan dx={6} fill="#DEA57A" fontSize={12} fontWeight={400}>{absDiff}</tspan>
+        <tspan dx={6} fill="#7B838D" fontSize={12} fontWeight={400}>{absDiff}</tspan>
       </text>
       {diff != null && diff !== 0 && (() => {
         const scoreWidth = score != null ? String(score.toFixed(1)).length * 7.5 : 0;
@@ -101,7 +101,7 @@ export default function RadarChartComponent({ scores }) {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-[#7B838D]">常模参考</span>
-            <svg width="24" height="4"><line x1="0" y1="2" x2="24" y2="2" stroke="#F2CFB4" strokeWidth="2" strokeDasharray="4 3" /></svg>
+            <svg width="24" height="4"><line x1="0" y1="2" x2="24" y2="2" stroke="#C5C9CE" strokeWidth="2" strokeDasharray="4 3" /></svg>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={300}>
@@ -127,7 +127,7 @@ export default function RadarChartComponent({ scores }) {
             <Radar
               name="常模参考"
               dataKey="norm"
-              stroke="#F2CFB4"
+              stroke="#C5C9CE"
               fill="none"
               strokeDasharray="4 4"
               strokeWidth={1.5}
