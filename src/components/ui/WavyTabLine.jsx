@@ -58,14 +58,14 @@ export default function WavyTabLine({ activeIndex, tabCount }) {
     <svg
       viewBox="0 0 400 32"
       preserveAspectRatio="none"
-      className="w-full h-[14px]"
+      className="w-full h-[12px] -mt-[2px]"
       style={{ display: 'block' }}
     >
       <path
         d={buildPath()}
         fill="none"
         stroke="#00674D"
-        strokeWidth="1.2"
+        strokeWidth="1.5"
         strokeOpacity="0.3"
         strokeLinecap="round"
         strokeLinejoin="round"
