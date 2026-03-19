@@ -4,15 +4,15 @@ import ModalOverlay from './ui/ModalOverlay';
 import { getHistory, deleteHistoryRecord } from '../utils/storage';
 
 const typeLabels = {
-  bfi: 'BFI 测评',
+  bfi: 'BFI测试',
   mbti: 'MBTI',
   jung: '荣格八维',
 };
 
 const typeColors = {
-  bfi: 'bg-primary/20 text-primary',
-  mbti: 'bg-[#6b5ca5]/20 text-[#6b5ca5]',
-  jung: 'bg-amber-500/20 text-amber-600',
+  bfi: 'bg-[#e8f4dd] text-[#2c9364]',
+  mbti: 'bg-[#e8f5fa] text-[#3c7a94]',
+  jung: 'bg-[#faf9e8] text-[#a48341]',
 };
 
 export default function HistoryPage({ onBack, onSelectRecord }) {
@@ -49,39 +49,47 @@ export default function HistoryPage({ onBack, onSelectRecord }) {
             <p className="text-text-secondary/50 text-[14px] mt-1">完成一次测评后记录将出现在这里</p>
           </div>
         ) : (
-          <div className="w-full px-4 flex flex-col gap-5">
+          <div className="w-full px-4 flex flex-col gap-3">
             {history.map((record) => (
               <button
                 key={record.id}
                 onClick={() => onSelectRecord(record.id)}
-                className="w-full text-left rounded-[12px] p-5 bg-white border border-[#F1F2F4] active:bg-[#f8f8f8] transition-colors"
+                className="w-full text-left rounded-[4px] px-3 py-3.5 bg-white border-[0.5px] border-[#F1F2F4] active:bg-[#f8f8f8] transition-colors"
               >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-text-secondary">{formatDate(record.timestamp)}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${typeColors[record.assessmentType] || typeColors.bfi}`}>
-                      {typeLabels[record.assessmentType] || 'BFI 测评'}
+                <div className="flex flex-col gap-2.5">
+                  {/* Row 1: Date + Delete */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1 text-[12px] text-[#BBC1C9] tracking-[0.5px]">
+                      <span>{formatDate(record.timestamp).split(' ')[0]}</span>
+                      <span>{formatDate(record.timestamp).split(' ')[1]}</span>
+                    </div>
+                    <button
+                      onClick={(e) => handleDeleteClick(e, record.id)}
+                      className="text-[#BBC1C9] active:text-red-400 transition-colors"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 20 20" fill="none">
+                        <path d="M6 6L14 14M14 6L6 14" stroke="currentColor" strokeWidth={1.2} strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Row 2: Personality tag + Type badge */}
+                  <div className="flex items-center gap-4">
+                    {record.personalityTag && (
+                      <span className="text-sm font-semibold text-black">{record.personalityTag}</span>
+                    )}
+                    <span className={`text-[12px] px-2 py-px rounded-full tracking-[0.5px] ${typeColors[record.assessmentType] || typeColors.bfi}`}>
+                      {typeLabels[record.assessmentType] || 'BFI测试'}
                     </span>
                   </div>
-                  <button
-                    onClick={(e) => handleDeleteClick(e, record.id)}
-                    className="text-text-secondary/40 active:text-red-400 transition-colors p-1"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-                {record.personalityTag && (
-                  <p className="text-sm font-semibold text-text-primary mb-1">{record.personalityTag}</p>
-                )}
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-text-secondary/60 line-clamp-1">
-                    {record.report ? '已生成报告' : (record.assessmentType === 'mbti' || record.assessmentType === 'jung') ? '报告生成失败' : '仅测评结果'}
-                  </p>
-                  <div className="flex items-center gap-2">
+
+                  {/* Row 3: Status + Resume */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-[#7B838D] leading-[21px]">
+                      {record.report ? '已生成报告' : (record.assessmentType === 'mbti' || record.assessmentType === 'jung') ? '报告生成失败' : '仅测评结果'}
+                    </span>
                     {record.resumeSkipped && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-text-secondary/10 text-text-secondary">
+                      <span className="text-[13px] text-[#00674D] leading-[21px]">
                         未上传简历
                       </span>
                     )}

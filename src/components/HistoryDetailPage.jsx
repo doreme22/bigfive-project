@@ -5,6 +5,7 @@ import DeepReportTab from './results/DeepReportTab';
 import { getHistoryRecord } from '../utils/storage';
 import { mergePersonalityData } from '../utils/personality';
 import { getMatchingJobs, pickRandomJobs } from '../data/jobs';
+import WavyTabLine from './ui/WavyTabLine';
 
 function useJobRotation(scores, jungScores, mbtiType) {
   const [state, setState] = useState(() => {
@@ -84,20 +85,23 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
       <div className="relative z-10 flex-shrink-0 [&>div]:bg-transparent">
         <PageHeader title="历史报告" onBack={onBack} sticky={false} />
         {tabs.length > 1 && (
-          <div className="px-6 pt-4 pb-6 flex gap-2">
-            {tabs.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  activeTab === tab.key
-                    ? 'bg-primary text-white'
-                    : 'bg-bg-card text-text-secondary'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="mb-3">
+            <div className="flex">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key)}
+                  className={`flex-1 pt-3 pb-1 text-sm font-medium transition-all ${
+                    activeTab === tab.key
+                      ? 'text-primary'
+                      : 'text-[#7B838D]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <WavyTabLine activeIndex={tabs.findIndex(t => t.key === activeTab)} tabCount={tabs.length} />
           </div>
         )}
       </div>
@@ -127,13 +131,16 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
               {!hasReport && onGoResume && (
                 <button
                   onClick={() => onGoResume(record)}
-                  className="w-full mt-6 p-5 text-center active:bg-bg-card-hover transition-colors"
+                  className="w-full mt-6 p-5 text-center bg-bg-card border border-dashed border-[#F1F2F4] rounded-lg active:bg-bg-card-hover transition-colors"
                 >
-                  <svg className="w-8 h-8 text-primary mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  <svg className="w-8 h-8 text-[#7B838D] mx-auto mb-2" fill="none" viewBox="0 0 20 20" stroke="currentColor" strokeWidth={1.25}>
+                    <path d="M3.33325 5.0013C3.33325 3.16035 4.82564 1.66797 6.66659 1.66797H9.99992H11.7193C12.2139 1.66797 12.683 1.88767 12.9997 2.26766L16.2803 6.20441C16.5299 6.50394 16.6666 6.88149 16.6666 7.27139V10.0013V15.0013C16.6666 16.8423 15.1742 18.3346 13.3333 18.3346H6.66658C4.82563 18.3346 3.33325 16.8423 3.33325 15.0013V5.0013Z" />
+                    <path d="M12.4998 2.08594V5.0026C12.4998 5.92308 13.2459 6.66927 14.1664 6.66927H16.2498" strokeLinecap="round" />
+                    <path d="M6.6665 10H13.3332" strokeLinecap="round" />
+                    <path d="M6.6665 14.168H9.99984" strokeLinecap="round" />
                   </svg>
                   <p className="text-sm font-semibold text-text-primary mb-1">上传简历，获取 AI 深度报告</p>
-                  <p className="text-xs text-text-secondary">结合简历生成职场画像、岗位推荐与成长建议</p>
+                  <p className="text-xs text-[#BBC1C9]">结合简历生成职场画像、岗位推荐与成长建议</p>
                 </button>
               )}
             </div>
