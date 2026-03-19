@@ -54,7 +54,7 @@ const createTickRenderer = (scoreMap, normMap) => ({ payload, x, y, cx, cy }) =>
       </text>
       <text
         x={labelX}
-        y={labelY + 16}
+        y={labelY + 20}
         dominantBaseline="central"
         textAnchor="middle"
         fontFamily="PingFang SC, -apple-system, sans-serif"
@@ -67,7 +67,7 @@ const createTickRenderer = (scoreMap, normMap) => ({ payload, x, y, cx, cy }) =>
         const diffWidth = absDiff.length * 6.5;
         const totalWidth = scoreWidth + 6 + diffWidth;
         const arrowX = labelX - totalWidth / 2 + totalWidth + 5;
-        const arrowY = labelY + 16;
+        const arrowY = labelY + 20;
         return diff > 0 ? arrowUp(arrowX, arrowY) : arrowDown(arrowX, arrowY);
       })()}
     </g>
