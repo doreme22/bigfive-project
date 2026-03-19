@@ -6,7 +6,7 @@ import { getHistory, deleteHistoryRecord } from '../utils/storage';
 const typeLabels = {
   bfi: 'BFI测试',
   mbti: 'MBTI',
-  jung: 'MBTI',
+  jung: '荣格八维',
 };
 
 const typeColors = {
