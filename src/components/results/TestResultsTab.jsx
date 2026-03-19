@@ -74,7 +74,7 @@ export default function TestResultsTab({ scores, section }) {
         {Object.keys(dimensionNames).map((dim) => (
           <div key={dim} className="pb-5 mb-5 border-b border-[#F1F2F4] last:border-b-0 last:mb-0 last:pb-0">
             <div className="flex items-center gap-2 mb-2">
-              <span className="w-2 h-2 rounded-full bg-primary" />
+              <span className="w-2 h-2 rounded-full bg-[#00674D]" />
               <span className="text-sm font-semibold text-text-primary">
                 {dimensionNames[dim]}
               </span>
@@ -107,7 +107,7 @@ export default function TestResultsTab({ scores, section }) {
         {Object.keys(dimensionNames).map((dim) => (
           <div key={dim} className="pb-5 mb-5 border-b border-[#F1F2F4] last:border-b-0 last:mb-0 last:pb-0">
             <div className="flex items-center gap-2 mb-2">
-              <span className="w-2 h-2 rounded-full bg-primary" />
+              <span className="w-2 h-2 rounded-full bg-[#00674D]" />
               <span className="text-sm font-semibold text-text-primary">
                 {dimensionNames[dim]}
               </span>
