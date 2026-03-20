@@ -435,8 +435,28 @@ export default function App({ autoStage }) {
 
   const effectiveScores = mergePersonalityData(state.bfiScores, state.jungScores, state.mbtiType);
 
+  const stageStyle = {
+    [STAGE.HOME]: { bg: '#f0f5ec' },
+    [STAGE.WELCOME]: { bg: '#f0f5ec', gradient: 'linear-gradient(180deg, #CAF6E6 0%, rgba(255,255,255,0) 50%)' },
+    [STAGE.QUIZ]: { bg: '#f0f5ec', gradient: 'linear-gradient(180deg, #CAF6E6 0%, rgba(255,255,255,0) 50%)' },
+    [STAGE.MANUAL_INPUT]: { bg: '#FBFBFB' },
+    [STAGE.HISTORY]: { bg: '#FBFBFB' },
+    [STAGE.HISTORY_DETAIL]: { bg: '#FBFBFB' },
+    [STAGE.RESULT]: { bg: '#FBFBFB', gradient: 'linear-gradient(180deg, rgba(142,241,205,0.5) 0%, rgba(255,255,255,0) 40%)' },
+    [STAGE.RESUME]: { bg: '#f8fafc' },
+    [STAGE.LOADING]: { bg: '#ffffff' },
+    [STAGE.ATTACHMENT_MANAGE]: { bg: '#f0f5ec' },
+    [STAGE.JOB_DETAIL]: { bg: '#f0f5ec' },
+  }[state.stage] || { bg: '#f0f5ec' };
+
+  useEffect(() => {
+    document.body.style.background = stageStyle.gradient
+      ? `${stageStyle.gradient}, ${stageStyle.bg}`
+      : stageStyle.bg;
+  }, [state.stage]);
+
   return (
-    <div className="max-w-lg mx-auto">
+    <div className="w-full" style={{ background: stageStyle.bg }}>
       {state.stage === STAGE.HOME && (
         <HomePage
           onGoTest={() => dispatch({ type: 'SET_STAGE', payload: STAGE.WELCOME })}
