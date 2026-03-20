@@ -71,7 +71,7 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
 
         {/* Subtitle */}
         <div className="px-4 mt-3">
-          <p className="text-[13px] leading-normal text-[#656d76]">基于BFI-44量表 + AI深度解析</p>
+          <p className="text-[14px] leading-normal text-[#656d76]">大五人格测评 · 专属职场报告</p>
         </div>
 
         {/* Feature list */}
