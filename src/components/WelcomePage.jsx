@@ -94,9 +94,10 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
       </div>
 
       {/* Illustration + labels — fills remaining space */}
+      <div className="flex-1 min-h-0" />
       <div
-        className="relative z-[1] pointer-events-none"
-        style={{ marginLeft: '9.87%', width: '90.4%', aspectRatio: '339 / 401', marginTop: '-5%' }}
+        className="relative z-[1] pointer-events-none shrink-0"
+        style={{ marginLeft: '9.87%', width: '90.4%', aspectRatio: '339 / 401', marginBottom: '140px' }}
       >
         <img
           src="/images/home-illustration.svg"
