@@ -83,7 +83,7 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-2">
               <img src="/images/home-feature-icon.svg" alt="" className="w-[18px] h-[18px] flex-shrink-0" />
-              <span className="text-[14px] leading-[21px] text-black">
+              <span className="text-[14px] leading-[21px] text-black italic">
                 {item.before}
                 <span className="underline decoration-2 decoration-[#98CEBD] underline-offset-[0px] font-medium">{item.highlight}</span>
                 {item.after}
