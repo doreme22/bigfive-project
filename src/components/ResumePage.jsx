@@ -292,7 +292,7 @@ export default function ResumePage({
           <button
             onClick={() => onSubmit(resumeText)}
             disabled={!resumeText.trim() || parsing}
-            className={`w-full h-[50px] rounded-full flex items-center justify-center transition-transform bg-[#494949] ${
+            className={`w-full h-[50px] rounded-[12px] flex items-center justify-center transition-transform bg-[#494949] ${
               resumeText.trim() && !parsing
                 ? 'active:scale-[0.98]'
                 : 'opacity-60 cursor-not-allowed'
