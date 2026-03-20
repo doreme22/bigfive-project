@@ -138,9 +138,9 @@ export default function QuestionCard({ question, index, total, onAnswer, onBack,
                     }
                   }}
                   disabled={!selected}
-                  className={`h-[36px] px-6 rounded-full bg-[#494949] flex items-center justify-center active:scale-[0.98] transition-transform ${!selected ? 'opacity-30' : ''}`}
+                  className={`h-[36px] px-6 rounded-full bg-[#EBFAF5] flex items-center justify-center active:scale-[0.98] transition-transform ${!selected ? 'opacity-30' : ''}`}
                 >
-                  <span className="text-[14px] font-semibold text-[#d1fff0]">完成</span>
+                  <span className="text-[14px] font-semibold text-[#008B68]">完成</span>
                 </button>
               ) : (
                 <button
