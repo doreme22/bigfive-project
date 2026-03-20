@@ -1,6 +1,4 @@
 import Markdown from 'react-markdown';
-import ArticleCard from '../ui/ArticleCard';
-import { getArticlesForTopic } from '../../data/articles';
 
 const MOCK_GROWTH = [
   { title: '自我觉察', description: '定期回顾自己的决策模式和情绪反应，建立自我认知的习惯', tags: ['情绪管理', '情绪稳定', '自我认知'] },
@@ -27,31 +25,19 @@ export default function GrowthEngineSection({ report, growthSuggestions }) {
       <div className="bg-white rounded-b-lg pb-4 px-4">
         {suggestions.length > 0 ? (
           <div className="space-y-6">
-            {suggestions.map((suggestion, i) => {
-              const articles = getArticlesForTopic(suggestion.tags, 3);
-              return (
-                <div key={i}>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="w-[14px] h-[14px] rounded-tl-full rounded-tr-full rounded-br-full bg-[#6FCDAE] flex items-center justify-center text-[10px] font-semibold text-white">
-                        {i + 1}
-                      </span>
-                      <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{suggestion.title}</span>
-                    </div>
-                    <p className="text-[13px] text-black leading-[18px] tracking-[0.5px]">{suggestion.description}</p>
+            {suggestions.map((suggestion, i) => (
+              <div key={i}>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="w-[14px] h-[14px] rounded-tl-full rounded-tr-full rounded-br-full bg-[#6FCDAE] flex items-center justify-center text-[10px] font-semibold text-white">
+                      {i + 1}
+                    </span>
+                    <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{suggestion.title}</span>
                   </div>
-
-                  {articles.length > 0 && (
-                    <div className="mt-2 space-y-2">
-                      <div className="border-t border-[#2B3F6C]/10 my-2" />
-                      {articles.map((article) => (
-                        <ArticleCard key={article.id} article={article} />
-                      ))}
-                    </div>
-                  )}
+                  <p className="text-[13px] text-black leading-[18px] tracking-[0.5px]">{suggestion.description}</p>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         ) : section ? (
           <div className="report-content">

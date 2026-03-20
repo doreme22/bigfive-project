@@ -64,7 +64,7 @@ export default function ResumePage({
     if (selectedAttachment) {
       const text = `[附件内容] ${selectedAttachment.fileName}\n\n（这是从在线简历导入的附件，实际内容将在 API 接入后加载）`;
       setResumeText(text);
-      setImportSource(selectedAttachment.fileName);
+      setImportSource(`attachment:${selectedAttachment.fileName}`);
       setDisplayState('picker');
     }
   }, [selectedAttachment]);
@@ -112,8 +112,8 @@ export default function ResumePage({
 
   // Which source row is active
   const isOnlineActive = importSource === '在线简历';
-  const isLocalActive = !!(importSource && /\.\w+$/.test(importSource));
-  const isAttachActive = !!(importSource && !isOnlineActive && !isLocalActive);
+  const isAttachActive = !!(importSource && importSource.startsWith('attachment:'));
+  const isLocalActive = !!(importSource && !isOnlineActive && !isAttachActive);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc] relative overflow-hidden">
@@ -162,16 +162,17 @@ export default function ResumePage({
                 {onlineResumeData && (
                   <button
                     onClick={handleImportOnlineResume}
-                    className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] text-left ${
+                    className={`w-full flex items-center px-3 py-5 rounded-[4px] text-left gap-4 ${
                       isOnlineActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
                     }`}
                   >
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 shrink-0">
                       <img src="/images/icon-resume-online.svg" alt="" className="w-5 h-5 shrink-0" style={isOnlineActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
                       <span className="text-[14px] font-medium text-black">在线简历</span>
                     </div>
+                    <div className="flex-1 min-w-0" />
                     {onlineResumeData.name ? (
-                      <span className={`text-[14px] ${isOnlineActive ? 'text-black' : 'text-[#656D76]'}`}>{onlineResumeData.name}·{onlineResumeData.title}</span>
+                      <span className={`text-[13px] truncate min-w-0 ${isOnlineActive ? 'text-black' : 'text-[#656D76]'}`}>{onlineResumeData.name}·{onlineResumeData.title}</span>
                     ) : (
                       <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
                     )}
@@ -181,26 +182,31 @@ export default function ResumePage({
                 {hasAttachments && onGoAttachments && (
                   <button
                     onClick={() => onGoAttachments(resumeText, importSource)}
-                    className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] text-left ${
+                    className={`w-full flex items-center px-3 py-5 rounded-[4px] text-left gap-4 ${
                       isAttachActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
                     }`}
                   >
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 shrink-0">
                       <img src="/images/icon-resume-attachment.svg" alt="" className="w-5 h-5 shrink-0" style={isAttachActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
                       <span className="text-[14px] font-medium text-black">附件导入</span>
                     </div>
-                    <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
+                    <div className="flex-1 min-w-0" />
+                    {isAttachActive ? (
+                      <span className="text-[13px] text-black truncate min-w-0">{importSource.replace(/^attachment:/, '')}</span>
+                    ) : (
+                      <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
+                    )}
                   </button>
                 )}
 
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={parsing}
-                  className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] text-left ${
+                  className={`w-full flex items-center px-3 py-5 rounded-[4px] text-left gap-4 ${
                     isLocalActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
                   }`}
                 >
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 shrink-0">
                     {parsing ? (
                       <svg className="w-5 h-5 text-black animate-spin shrink-0" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -213,8 +219,13 @@ export default function ResumePage({
                       {parsing ? '正在解析...' : '本地文件'}
                     </span>
                   </div>
+                  <div className="flex-1 min-w-0" />
                   {!parsing && (
-                    <span className={`text-[14px] ${isLocalActive ? 'text-black' : 'text-[#656D76]'}`}>支持TXT、MD、DOC、PDF</span>
+                    isLocalActive ? (
+                      <span className="text-[13px] text-black truncate min-w-0">{importSource}</span>
+                    ) : (
+                      <span className="text-[14px] text-[#656D76] shrink-0">支持TXT、MD、DOC、PDF</span>
+                    )
                   )}
                 </button>
               </div>
@@ -265,7 +276,7 @@ export default function ResumePage({
                       <img src="/images/icon-resume-local.svg" alt="" className="w-5 h-5 shrink-0" />
                     )}
                     <span className="text-[14px] font-medium text-black">
-                      {parsing ? '正在解析...' : importSource ? importSource : '本地文件'}
+                      {parsing ? '正在解析...' : importSource ? importSource.replace(/^attachment:/, '') : '本地文件'}
                     </span>
                     {importSource && !parsing && (
                       <span className="text-[10px] text-[#bbc1c9] ml-1">点击重新上传</span>
@@ -292,7 +303,7 @@ export default function ResumePage({
           <button
             onClick={() => onSubmit(resumeText)}
             disabled={!resumeText.trim() || parsing}
-            className={`w-full h-[50px] rounded-full flex items-center justify-center transition-transform bg-[#494949] ${
+            className={`w-full h-[50px] rounded-[12px] flex items-center justify-center transition-transform bg-[#494949] ${
               resumeText.trim() && !parsing
                 ? 'active:scale-[0.98]'
                 : 'opacity-60 cursor-not-allowed'
