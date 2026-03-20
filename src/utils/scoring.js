@@ -183,6 +183,8 @@ export function buildGrowthPrompt(scores, jungScores, resume) {
 
   return `基于用户的${dataStr}
 
-请给出 3 条最关键的个人成长建议。严格按以下 JSON 格式返回，不要包含其他文字：
-[{"title": "建议标题(5字以内)", "description": "50字以内的具体建议", "tags": ["相关标签1", "相关标签2"]}]`;
+请给出 3 条最关键的个人成长建议。其中至少 1 条需围绕"AI 时代下，该性格与背景的人应如何发展"展开，给出具体可操作的方向。
+
+严格按以下 JSON 格式返回，不要包含其他文字：
+[{"title": "建议标题(5字以内)", "description": "80字以内的具体建议"}]`;
 }

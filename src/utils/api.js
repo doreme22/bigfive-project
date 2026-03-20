@@ -186,9 +186,9 @@ function generateMockJobTypeRecs(scores) {
 function generateMockGrowthSuggestions(scores) {
   if (!scores) {
     return [
-      { title: '自我觉察', description: '定期回顾自己的决策模式和情绪反应，建立自我认知的习惯。', tags: ['自我认知', '成长'] },
-      { title: '跨界学习', description: '每月接触一个新领域的知识，保持认知弹性和创新思维。', tags: ['学习', '创新'] },
-      { title: '关系经营', description: '主动维护职场人际关系，每周与一位同事或朋友进行有质量的交流。', tags: ['社交', '人际关系'] },
+      { title: '自我觉察', description: '定期回顾自己的决策模式和情绪反应，建立自我认知的习惯。' },
+      { title: 'AI 时代突围', description: '识别你所在领域中 AI 难以替代的能力（如创意判断、人际共情），主动向这些方向深耕。' },
+      { title: '关系经营', description: '主动维护职场人际关系，每周与一位同事或朋友进行有质量的交流。' },
     ];
   }
 
@@ -199,7 +199,6 @@ function generateMockGrowthSuggestions(scores) {
     suggestions.push({
       title: '情绪转化训练',
       description: '建立"焦虑→行动"转化机制，每次焦虑时写下担忧和最小可执行步骤，打断内耗循环。',
-      tags: ['情绪管理', '焦虑', '情绪稳定'],
     });
   }
 
@@ -207,7 +206,6 @@ function generateMockGrowthSuggestions(scores) {
     suggestions.push({
       title: '弱关系经营',
       description: '每周花15分钟给一位欣赏但不太熟的人发一条有价值的消息，维护职场"存在感"。',
-      tags: ['社交', '人际关系', '外向性提升'],
     });
   }
 
@@ -215,7 +213,6 @@ function generateMockGrowthSuggestions(scores) {
     suggestions.push({
       title: '两分钟启动法',
       description: '任何任务，先做两分钟再决定是否继续。行动本身就是创造状态的最佳方式。',
-      tags: ['执行力', '习惯养成', '尽责性提升'],
     });
   }
 
@@ -223,7 +220,6 @@ function generateMockGrowthSuggestions(scores) {
     suggestions.push({
       title: '舒适区挑战',
       description: '每月刻意尝试一件新事物——新技能、新社交圈或新思考框架，保持认知弹性。',
-      tags: ['开放性提升', '创新', '认知升级'],
     });
   }
 
@@ -231,16 +227,20 @@ function generateMockGrowthSuggestions(scores) {
     suggestions.push({
       title: '健康拒绝术',
       description: '练习不含歉意的拒绝：直接说"这个我做不了"，而非"不好意思可能没时间"。',
-      tags: ['边界', '宜人性', '自我保护'],
     });
   }
+
+  // AI 时代建议（固定主题）
+  suggestions.push({
+    title: 'AI 时代突围',
+    description: '学会将 AI 作为放大器而非替代品，聚焦你性格中 AI 无法复制的部分——人际判断、情绪感知、创意直觉。',
+  });
 
   // Ensure at least 3
   while (suggestions.length < 3) {
     suggestions.push({
       title: '反直觉挑战',
       description: '定期做一件不在舒适区内的事，保持一点摩擦感是对抗性格"舒适陷阱"的最佳方式。',
-      tags: ['成长', '自我认知', '挑战'],
     });
   }
 

@@ -1,15 +1,10 @@
 import Markdown from 'react-markdown';
 
-const MOCK_GROWTH = [
-  { title: '自我觉察', description: '定期回顾自己的决策模式和情绪反应，建立自我认知的习惯', tags: ['情绪管理', '情绪稳定', '自我认知'] },
-  { title: '跨界学习', description: '每月接触一个新领域的知识，保持认知弹性和创新思维', tags: ['开放性提升', '跨学科', '成长', '创新'] },
-  { title: '关系经营', description: '主动维护职场人际关系，每周与一位同事或朋友进行有质量的交流', tags: ['人际关系', '社交', '外向性提升'] },
-];
-
 export default function GrowthEngineSection({ report, growthSuggestions }) {
   const section = extractSection(report, '成长引擎');
-  // TODO: 临时强制使用 mock 数据，验证样式后恢复
-  const suggestions = MOCK_GROWTH;
+  const suggestions = Array.isArray(growthSuggestions) && growthSuggestions.length > 0
+    ? growthSuggestions
+    : null;
 
   return (
     <div className="mb-4">
@@ -23,7 +18,7 @@ export default function GrowthEngineSection({ report, growthSuggestions }) {
 
       {/* 内容区 */}
       <div className="bg-white rounded-b-lg pb-4 px-4">
-        {suggestions.length > 0 ? (
+        {suggestions ? (
           <div className="space-y-6">
             {suggestions.map((suggestion, i) => (
               <div key={i}>
