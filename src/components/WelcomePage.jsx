@@ -77,13 +77,17 @@ export default function WelcomePage({ onStart, onGoManualInput, onGoHistory, onR
         {/* Feature list */}
         <div className="px-4 mt-10 flex flex-col gap-5">
           {[
-            '44道经典题目，科学测评',
-            '五维雷达图 + 常模对比',
-            'AI深度分析 + 岗位推荐',
-          ].map((text) => (
-            <div key={text} className="flex items-center gap-2">
+            { before: '心理学界公认', highlight: '最可靠的人格模型' },
+            { before: '国际权威 BFI-44 量表，', highlight: '50+ 国家验证' },
+            { before: '', highlight: 'AI 深度解读', after: ' + 岗位推荐' },
+          ].map((item, i) => (
+            <div key={i} className="flex items-center gap-2">
               <img src="/images/home-feature-icon.svg" alt="" className="w-[18px] h-[18px] flex-shrink-0" />
-              <span className="text-[14px] leading-[21px] text-black">{text}</span>
+              <span className="text-[14px] leading-[21px] text-black">
+                {item.before}
+                <span className="underline decoration-2 decoration-[#98CEBD] underline-offset-[0px]">{item.highlight}</span>
+                {item.after}
+              </span>
             </div>
           ))}
         </div>
