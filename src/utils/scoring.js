@@ -82,7 +82,7 @@ export function buildDeepReportPrompt(scores, jungScores, mbtiType, resume) {
     const sorted = Object.entries(jungScores)
       .sort(([, a], [, b]) => b - a);
     const stackStr = sorted.map(([fn, val]) => `${fn}: ${val}`).join(', ');
-    personalityBlock = `【荣格八维认知功能强度】${stackStr}（满分 100）`;
+    personalityBlock = `【荣格八维认知功能强度】${stackStr}`;
     analysisGuide = `分析要点：
 - 识别主导功能（最高分）和辅助功能（第二高分），这两者构成核心认知模式
 - 关注第三/第四功能的发展程度，它们代表成长空间

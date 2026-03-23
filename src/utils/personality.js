@@ -22,8 +22,7 @@ export function generatePersonalityTag(bfiScores, mbtiType, jungScores) {
   // BFI 高+低突出维度
   if (bfiScores) {
     const norms = { E: 3.10, A: 3.75, C: 3.36, N: 3.05, O: 3.69 };
-    const highLabels = { E: '高外向性', A: '高宜人性', C: '高尽责性', N: '高情绪性', O: '高开放性' };
-    const lowLabels = { E: '内向型', A: '独立型', C: '灵活型', N: '情绪稳定', O: '务实型' };
+    const dimNames = { E: '外向性', A: '宜人性', C: '尽责性', N: '神经质', O: '开放性' };
 
     let bestHigh = null, bestHighDiff = 0;
     let bestLow = null, bestLowDiff = 0;
@@ -40,11 +39,11 @@ export function generatePersonalityTag(bfiScores, mbtiType, jungScores) {
     }
 
     if (bestHigh && bestLow) {
-      parts.push(highLabels[bestHigh] + ' · ' + lowLabels[bestLow]);
+      parts.push('高' + dimNames[bestHigh] + ' · ' + '低' + dimNames[bestLow]);
     } else if (bestHigh) {
-      parts.push(highLabels[bestHigh]);
+      parts.push('高' + dimNames[bestHigh]);
     } else if (bestLow) {
-      parts.push(lowLabels[bestLow]);
+      parts.push('低' + dimNames[bestLow]);
     } else {
       parts.push('均衡型');
     }

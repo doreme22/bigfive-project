@@ -16,7 +16,7 @@ export default function JungSlider({ label, value, onChange }) {
       onChange(0);
       return;
     }
-    const num = Math.min(100, Math.max(0, Number(raw)));
+    const num = Math.max(0, Number(raw));
     onChange(num);
     // 确保光标始终在末尾
     requestAnimationFrame(() => {

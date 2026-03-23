@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useEffect, useState } from 'react';
+import { useReducer, useCallback, useEffect, useState, useRef } from 'react';
 import HomePage from './components/HomePage';
 import WelcomePage from './components/WelcomePage';
 import QuestionCard from './components/QuestionCard';
@@ -212,8 +212,9 @@ export default function App({ autoStage }) {
     ...initialState,
     stage: autoStage === 'resume' ? STAGE.RESUME : initialState.stage,
   });
-  const [showSyncModal, setShowSyncModal] = useState(false);
   const [showExitResumeModal, setShowExitResumeModal] = useState(false);
+  const [showSyncModal, setShowSyncModal] = useState(false);
+  const hasNewUploadRef = useRef(false);
 
   // Save quiz progress on every answer
   useEffect(() => {
@@ -444,6 +445,14 @@ export default function App({ autoStage }) {
       : stageStyle.bg;
   }, [state.stage]);
 
+  // Show sync modal when returning to welcome/home after uploading a file
+  useEffect(() => {
+    if (state.stage === STAGE.HOME && hasNewUploadRef.current) {
+      hasNewUploadRef.current = false;
+      setShowSyncModal(true);
+    }
+  }, [state.stage]);
+
   return (
     <div className="w-full" style={{ background: stageStyle.bg }}>
       {state.stage === STAGE.HOME && (
@@ -461,10 +470,7 @@ export default function App({ autoStage }) {
           }}
           onGoHistory={() => dispatch({ type: 'SET_STAGE', payload: STAGE.HISTORY })}
           onRestoreProgress={handleRestoreProgress}
-          onBack={() => {
-            if (state.resumeText) setShowSyncModal(true);
-            dispatch({ type: 'SET_STAGE', payload: STAGE.HOME });
-          }}
+          onBack={() => dispatch({ type: 'SET_STAGE', payload: STAGE.HOME })}
         />
       )}
 
@@ -510,6 +516,7 @@ export default function App({ autoStage }) {
             dispatch({ type: 'SAVE_RESUME_DRAFT', payload: { text, source } });
             dispatch({ type: 'GO_ATTACHMENT_MANAGE' });
           }}
+          onFileUploaded={() => { hasNewUploadRef.current = true; }}
           selectedAttachment={state.selectedAttachment}
           draftResumeText={state.draftResumeText}
           draftImportSource={state.draftImportSource}
@@ -581,13 +588,16 @@ export default function App({ autoStage }) {
 
       {showSyncModal && (
         <ModalOverlay
-          title="发现新的简历信息"
-          onConfirm={() => setShowSyncModal(false)}
+          title="同步至在线简历"
+          onConfirm={() => {
+            // TODO: 实际调用 API 将简历文本同步至在线简历
+            setShowSyncModal(false);
+          }}
           onCancel={() => setShowSyncModal(false)}
           confirmText="立即同步"
           cancelText="之后再说"
         >
-          是否将本次使用的简历信息同步至在线简历？
+          检测到本次使用了新的简历信息，是否同步更新至在线简历？
         </ModalOverlay>
       )}
     </div>

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import PageHeader from './ui/PageHeader';
+import ActionSheet from './ui/ActionSheet';
 import * as pdfjsLib from 'pdfjs-dist';
 import {
   getOnlineResume,
@@ -31,7 +32,7 @@ async function extractTextFromPDF(file) {
 // empty  = no online data → big upload area + paste
 
 export default function ResumePage({
-  onSubmit, onSkip, onBack, onGoAttachments, selectedAttachment,
+  onSubmit, onSkip, onBack, onGoAttachments, onFileUploaded, selectedAttachment,
   draftResumeText, draftImportSource,
 }) {
   const [resumeText, setResumeText] = useState(draftResumeText || '');
@@ -39,7 +40,9 @@ export default function ResumePage({
   const [parsing, setParsing] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [displayState, setDisplayState] = useState(null); // null = loading
+  const [showUploadSheet, setShowUploadSheet] = useState(false);
   const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
 
   // Data availability
   const [onlineResumeData, setOnlineResumeData] = useState(null);
@@ -85,7 +88,9 @@ export default function ResumePage({
         const text = await extractTextFromPDF(file);
         setResumeText(text);
         setImportSource(file.name);
-        uploadAttachmentToOnline(file).then(() => setHasAttachments(true));
+        await uploadAttachmentToOnline(file);
+        setHasAttachments(true);
+        onFileUploaded?.();
       } catch (err) {
         console.error('PDF 解析失败:', err);
         setResumeText('');
@@ -98,7 +103,9 @@ export default function ResumePage({
       const text = await file.text();
       setResumeText(text);
       setImportSource(file.name);
-      uploadAttachmentToOnline(file).then(() => setHasAttachments(true));
+      await uploadAttachmentToOnline(file);
+      setHasAttachments(true);
+      onFileUploaded?.();
     }
   };
 
@@ -141,11 +148,18 @@ export default function ResumePage({
       {/* Content */}
       <div className="flex-1 flex flex-col px-4 relative z-[1] mt-[12px]">
 
-        {/* Shared hidden file input */}
+        {/* Hidden file inputs */}
         <input
           ref={fileInputRef}
           type="file"
           accept=".txt,.md,.doc,.docx,.pdf"
+          className="hidden"
+          onChange={(e) => { handleFileChange(e.target.files[0]); e.target.value = ''; }}
+        />
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/*"
           className="hidden"
           onChange={(e) => { handleFileChange(e.target.files[0]); e.target.value = ''; }}
         />
@@ -171,11 +185,7 @@ export default function ResumePage({
                       <span className="text-[14px] font-medium text-black">在线简历</span>
                     </div>
                     <div className="flex-1 min-w-0" />
-                    {onlineResumeData.name ? (
-                      <span className={`text-[13px] truncate min-w-0 ${isOnlineActive ? 'text-black' : 'text-[#656D76]'}`}>{onlineResumeData.name}·{onlineResumeData.title}</span>
-                    ) : (
-                      <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
-                    )}
+                    <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
                   </button>
                 )}
 
@@ -200,7 +210,7 @@ export default function ResumePage({
                 )}
 
                 <button
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => setShowUploadSheet(true)}
                   disabled={parsing}
                   className={`w-full flex items-center px-3 py-5 rounded-[4px] text-left gap-4 ${
                     isLocalActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
@@ -216,7 +226,7 @@ export default function ResumePage({
                       <img src="/images/icon-resume-local.svg" alt="" className="w-5 h-5 shrink-0" style={isLocalActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
                     )}
                     <span className="text-[14px] font-medium text-black">
-                      {parsing ? '正在解析...' : '本地文件'}
+                      {parsing ? '正在解析...' : '文件上传'}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0" />
@@ -224,7 +234,7 @@ export default function ResumePage({
                     isLocalActive ? (
                       <span className="text-[13px] text-black truncate min-w-0">{importSource}</span>
                     ) : (
-                      <span className="text-[14px] text-[#656D76] shrink-0">支持TXT、MD、DOC、PDF</span>
+                      <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
                     )
                   )}
                 </button>
@@ -253,14 +263,12 @@ export default function ResumePage({
               <div className="bg-white rounded-[12px] px-4 py-5 flex flex-col gap-[10px]">
                 <h3 className="text-[16px] font-semibold text-black">选择简历来源</h3>
 
-                <div
-                  className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] cursor-pointer transition-colors ${
-                    dragActive ? 'bg-primary/5' : 'bg-[#f8fafc]'
+                <button
+                  className={`w-full flex items-center justify-between px-3 py-5 rounded-[4px] transition-colors ${
+                    isLocalActive ? 'bg-[#EBFAF5] ring-1 ring-[#009688]' : 'bg-[#f8fafc]'
                   }`}
-                  onClick={() => fileInputRef.current?.click()}
-                  onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
-                  onDragLeave={() => setDragActive(false)}
-                  onDrop={handleDrop}
+                  onClick={() => setShowUploadSheet(true)}
+                  disabled={parsing}
                 >
                   <div className="flex items-center gap-1">
                     {parsing ? (
@@ -268,24 +276,24 @@ export default function ResumePage({
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                       </svg>
-                    ) : importSource ? (
-                      <svg className="w-5 h-5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
                     ) : (
-                      <img src="/images/icon-resume-local.svg" alt="" className="w-5 h-5 shrink-0" />
+                      <img src="/images/icon-resume-local.svg" alt="" className="w-5 h-5 shrink-0" style={isLocalActive ? { filter: 'brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(900%) hue-rotate(140deg)' } : undefined} />
                     )}
                     <span className="text-[14px] font-medium text-black">
-                      {parsing ? '正在解析...' : importSource ? importSource.replace(/^attachment:/, '') : '本地文件'}
+                      {parsing ? '正在解析...' : '文件上传'}
                     </span>
-                    {importSource && !parsing && (
+                    {isLocalActive && !parsing && (
                       <span className="text-[10px] text-[#bbc1c9] ml-1">点击重新上传</span>
                     )}
                   </div>
-                  {!parsing && !importSource && (
-                    <span className="text-[14px] text-[#bbc1c9]">支持TXT、MD、DOC、PDF</span>
+                  {!parsing && (
+                    isLocalActive ? (
+                      <span className="text-[13px] text-black truncate min-w-0">{importSource}</span>
+                    ) : (
+                      <img src="/images/icon-arrow-right.svg" alt="" className="w-5 h-5 shrink-0" />
+                    )
                   )}
-                </div>
+                </button>
               </div>
 
               <textarea
@@ -321,6 +329,27 @@ export default function ResumePage({
           )}
         </div>
       </div>
+
+      {showUploadSheet && (
+        <ActionSheet
+          options={[
+            {
+              label: '本地文件',
+              onClick: () => { setShowUploadSheet(false); fileInputRef.current?.click(); },
+            },
+            {
+              label: '上传图片',
+              onClick: () => { setShowUploadSheet(false); imageInputRef.current?.click(); },
+            },
+            {
+              label: '微信上传',
+              disabled: true,
+              onClick: () => {},
+            },
+          ]}
+          onCancel={() => setShowUploadSheet(false)}
+        />
+      )}
     </div>
   );
 }

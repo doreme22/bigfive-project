@@ -103,7 +103,7 @@ export default function ManualInputPage({ onSubmit, onBack }) {
         {/* Jung Section */}
         {mode === MODE_JUNG && (
           <div className="animate-fade-in mt-6">
-            <p className="text-xs text-black mb-3">输入各功能强度（0-100）</p>
+            <p className="text-xs text-black mb-3">输入各功能强度分数</p>
             <div className="space-y-[16px] px-[28px]">
               {jungFunctions.map((fn) => (
                 <JungSlider

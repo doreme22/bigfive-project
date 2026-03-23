@@ -318,6 +318,24 @@ body {
   }
 }
 
+/* Action sheet animations */
+.action-sheet-backdrop {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.action-sheet-content {
+  animation: sheetSlideUp 0.3s ease-out forwards;
+}
+
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 /* Line clamp utility */
 .line-clamp-1 {
   display: -webkit-box;

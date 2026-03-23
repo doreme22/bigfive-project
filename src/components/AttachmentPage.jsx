@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import PageHeader from './ui/PageHeader';
 import ModalOverlay from './ui/ModalOverlay';
 import {
   getOnlineAttachments,
-  uploadAttachmentToOnline,
   deleteOnlineAttachment,
   formatRelativeTime,
 } from '../utils/onlineResume';
@@ -65,8 +64,6 @@ export default function AttachmentPage({ onBack, onSelect }) {
   const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [showSyncModal, setShowSyncModal] = useState(false);
-  const fileInputRef = useRef(null);
 
   const loadAttachments = async () => {
     setLoading(true);
@@ -84,13 +81,6 @@ export default function AttachmentPage({ onBack, onSelect }) {
     await deleteOnlineAttachment(deleteTarget.id);
     setDeleteTarget(null);
     await loadAttachments();
-  };
-
-  const handleUpload = async (file) => {
-    if (!file) return;
-    await uploadAttachmentToOnline(file);
-    await loadAttachments();
-    setShowSyncModal(true);
   };
 
   return (
@@ -129,23 +119,6 @@ export default function AttachmentPage({ onBack, onSelect }) {
         )}
       </div>
 
-      {/* Bottom fixed upload button */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto px-4 pb-6 pt-3 bg-gradient-to-t from-bg-dark via-bg-dark/95 to-transparent">
-        <button
-          onClick={() => fileInputRef.current?.click()}
-          className="w-full py-4 rounded-2xl font-semibold text-base bg-gradient-to-r from-[#1a6b4a] to-[#22875e] text-white shadow-xl shadow-primary/25 active:scale-[0.98] transition-transform"
-        >
-          文件上传
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".txt,.md,.doc,.docx,.pdf"
-          className="hidden"
-          onChange={(e) => { handleUpload(e.target.files[0]); e.target.value = ''; }}
-        />
-      </div>
-
       {/* Delete confirmation modal */}
       {deleteTarget && (
         <ModalOverlay
@@ -159,18 +132,6 @@ export default function AttachmentPage({ onBack, onSelect }) {
         </ModalOverlay>
       )}
 
-      {/* Upload sync modal */}
-      {showSyncModal && (
-        <ModalOverlay
-          title="发现新的简历信息"
-          onConfirm={() => setShowSyncModal(false)}
-          onCancel={() => setShowSyncModal(false)}
-          confirmText="立即同步"
-          cancelText="之后再说"
-        >
-          检测到新上传的文件中包含简历信息，是否同步至在线简历？
-        </ModalOverlay>
-      )}
     </div>
   );
 }
