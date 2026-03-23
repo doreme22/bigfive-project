@@ -29,7 +29,9 @@ export default function GrowthEngineSection({ report }) {
                     </span>
                     <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{mod.title}</span>
                   </div>
-                  <p className="text-[13px] text-black leading-[18px] tracking-[0.5px]">{mod.content}</p>
+                  <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
+                    <Markdown>{mod.content}</Markdown>
+                  </div>
                 </div>
               </div>
             ))}
