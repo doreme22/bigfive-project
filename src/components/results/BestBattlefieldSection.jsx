@@ -1,4 +1,5 @@
 import Markdown from 'react-markdown';
+import BoldItemsOrMarkdown from '../ui/BoldItemsOrMarkdown';
 import JobCard from '../ui/JobCard';
 
 
@@ -35,9 +36,7 @@ export default function BestBattlefieldSection({
                 <div className="mb-1">
                   <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{sub.title}</span>
                 </div>
-                <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
-                  <Markdown>{sub.content}</Markdown>
-                </div>
+                <BoldItemsOrMarkdown content={sub.content} />
               </div>
             ))}
           </div>

@@ -1,6 +1,5 @@
 import Markdown from 'react-markdown';
-
-const SUB_MODULES = ['AI 时代突围', '习惯养成', '技能训练'];
+import BoldItemsOrMarkdown from '../ui/BoldItemsOrMarkdown';
 
 export default function GrowthEngineSection({ report }) {
   const section = extractSection(report, '成长引擎');
@@ -29,9 +28,7 @@ export default function GrowthEngineSection({ report }) {
                     </span>
                     <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{mod.title}</span>
                   </div>
-                  <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
-                    <Markdown>{mod.content}</Markdown>
-                  </div>
+                  <BoldItemsOrMarkdown content={mod.content} />
                 </div>
               </div>
             ))}

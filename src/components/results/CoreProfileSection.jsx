@@ -1,4 +1,5 @@
 import Markdown from 'react-markdown';
+import BoldItemsOrMarkdown from '../ui/BoldItemsOrMarkdown';
 
 
 export default function CoreProfileSection({ report }) {
@@ -21,38 +22,12 @@ export default function CoreProfileSection({ report }) {
       <div className="bg-white rounded-b-lg pb-4 px-4">
         {subs.length > 1 ? (
           <div className="space-y-6">
-            {subs.filter(sub => sub.content && sub.content.trim()).map((sub, i) => {
-              const items = splitBoldItems(sub.content);
-              return (
-                <div key={i} className="flex flex-col gap-2">
-                  <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{sub.title}</span>
-                  {items.length > 0 ? (
-                    <div className="space-y-0">
-                      {items.map((item, j) => (
-                        <div key={j} className="flex gap-2">
-                          {/* 左侧：编号 + 竖线 */}
-                          <div className="flex flex-col items-center shrink-0 w-5">
-                            <span className="text-[13px] text-[#BBC1C9] font-medium leading-[18px] italic">{String(j + 1).padStart(2, '0')}</span>
-                            {j < items.length - 1 && (
-                              <div className="w-[0.5px] flex-1 bg-[#DDE2E8] my-1" />
-                            )}
-                          </div>
-                          {/* 右侧：内容 */}
-                          <div className={`flex-1 min-w-0 ${j < items.length - 1 ? 'pb-3' : ''}`}>
-                            <p className="text-[13px] font-medium text-black leading-[18px] tracking-[0.5px]">{item.title}</p>
-                            <p className="text-[13px] text-[#656D76] leading-[18px] tracking-[0.5px] mt-1">{item.desc}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
-                      <Markdown>{sub.content}</Markdown>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+            {subs.filter(sub => sub.content && sub.content.trim()).map((sub, i) => (
+              <div key={i} className="flex flex-col gap-2">
+                <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{sub.title}</span>
+                <BoldItemsOrMarkdown content={sub.content} />
+              </div>
+            ))}
           </div>
         ) : (
           <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
@@ -62,23 +37,6 @@ export default function CoreProfileSection({ report }) {
       </div>
     </div>
   );
-}
-
-/**
- * Split content like "**Title**：desc\n\n**Title2**：desc2" into [{title, desc}]
- */
-function splitBoldItems(content) {
-  if (!content) return [];
-  const items = [];
-  const parts = content.split(/\n\n+/);
-  for (const part of parts) {
-    const trimmed = part.trim();
-    const match = trimmed.match(/^\*\*([^*]+)\*\*\s*[：:]\s*([\s\S]*)/);
-    if (match) {
-      items.push({ title: match[1], desc: match[2].trim() });
-    }
-  }
-  return items;
 }
 
 function extractSection(markdown, heading) {
