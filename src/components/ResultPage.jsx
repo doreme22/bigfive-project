@@ -9,7 +9,6 @@ export default function ResultPage({
   mbtiType,
   report,
   assessmentType,
-  growthSuggestions,
   displayedJobs,
   onRefreshJobs,
   onSelectJob,
@@ -122,7 +121,6 @@ export default function ResultPage({
           {activeTab === 'report' && hasReport && (
             <DeepReportTab
               report={report}
-              growthSuggestions={growthSuggestions}
               displayedJobs={displayedJobs}
               onRefreshJobs={onRefreshJobs}
               onSelectJob={onSelectJob}

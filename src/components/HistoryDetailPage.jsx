@@ -153,7 +153,6 @@ export default function HistoryDetailPage({ recordId, onBack, onSelectJob, onGoR
             <DeepReportTab
               report={record.report || ''}
               jobTypeRecs={record.jobTypeRecs || []}
-              growthSuggestions={record.growthSuggestions || []}
               displayedJobs={displayedJobs}
               onRefreshJobs={refreshJobs}
               onSelectJob={onSelectJob || (() => {})}

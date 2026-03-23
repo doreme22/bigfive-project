@@ -1,10 +1,10 @@
 import Markdown from 'react-markdown';
 
-export default function GrowthEngineSection({ report, growthSuggestions }) {
+const SUB_MODULES = ['AI 时代突围', '习惯养成', '技能训练'];
+
+export default function GrowthEngineSection({ report }) {
   const section = extractSection(report, '成长引擎');
-  const suggestions = Array.isArray(growthSuggestions) && growthSuggestions.length > 0
-    ? growthSuggestions
-    : null;
+  const modules = section ? parseSubModules(section) : [];
 
   return (
     <div className="mb-4">
@@ -18,18 +18,18 @@ export default function GrowthEngineSection({ report, growthSuggestions }) {
 
       {/* 内容区 */}
       <div className="bg-white rounded-b-lg pb-4 px-4">
-        {suggestions ? (
+        {modules.length > 0 ? (
           <div className="space-y-6">
-            {suggestions.map((suggestion, i) => (
+            {modules.map((mod, i) => (
               <div key={i}>
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <span className="w-[14px] h-[14px] rounded-tl-full rounded-tr-full rounded-br-full bg-[#6FCDAE] flex items-center justify-center text-[10px] font-semibold text-white">
                       {i + 1}
                     </span>
-                    <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{suggestion.title}</span>
+                    <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{mod.title}</span>
                   </div>
-                  <p className="text-[13px] text-black leading-[18px] tracking-[0.5px]">{suggestion.description}</p>
+                  <p className="text-[13px] text-black leading-[18px] tracking-[0.5px]">{mod.content}</p>
                 </div>
               </div>
             ))}
@@ -48,7 +48,22 @@ export default function GrowthEngineSection({ report, growthSuggestions }) {
 
 function extractSection(markdown, heading) {
   if (!markdown) return null;
-  const regex = new RegExp(`##\\s*${heading}([\\s\\S]*?)(?=##\\s|$)`);
+  const regex = new RegExp(`##\\s*${heading}([\\s\\S]*?)(?=\\n## |$)`);
   const match = markdown.match(regex);
   return match ? match[1].trim() : null;
+}
+
+/**
+ * 从成长引擎 section 中按 ### 标题解析子模块
+ */
+function parseSubModules(sectionText) {
+  const parts = sectionText.split(/###\s+/).filter(Boolean);
+  return parts.map((part) => {
+    const lineBreak = part.indexOf('\n');
+    if (lineBreak === -1) return { title: part.trim(), content: '' };
+    return {
+      title: part.slice(0, lineBreak).trim(),
+      content: part.slice(lineBreak + 1).trim(),
+    };
+  });
 }

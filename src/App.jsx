@@ -12,7 +12,7 @@ import HistoryDetailPage from './components/HistoryDetailPage';
 import JobDetailPage from './components/JobDetailPage';
 import { questions, shuffleQuestions } from './data/questions';
 import { calculateScores } from './utils/scoring';
-import { generateReport, generateJobTypeRecommendations, generateGrowthSuggestions } from './utils/api';
+import { generateReport, generateJobTypeRecommendations } from './utils/api';
 import { mergePersonalityData, generatePersonalityTag } from './utils/personality';
 import { getMatchingJobs, pickRandomJobs } from './data/jobs';
 import { saveQuizProgress, clearQuizProgress, clearManualProgress, addHistoryRecord, updateHistoryRecord } from './utils/storage';
@@ -44,7 +44,6 @@ const initialState = {
   resumeText: '',
   report: '',
   jobTypeRecs: [],
-  growthSuggestions: [],
   displayedJobs: [],
   excludedJobIds: [],
   selectedHistoryId: null,
@@ -77,8 +76,7 @@ function reducer(state, action) {
         bfiScores: null,
         report: '',
         jobTypeRecs: [],
-        growthSuggestions: [],
-        displayedJobs: [],
+              displayedJobs: [],
         excludedJobIds: [],
         supplementingRecordId: null,
       };
@@ -156,9 +154,6 @@ function reducer(state, action) {
     case 'SET_JOB_TYPE_RECS':
       return { ...state, jobTypeRecs: action.payload };
 
-    case 'SET_GROWTH_SUGGESTIONS':
-      return { ...state, growthSuggestions: action.payload };
-
     case 'SET_DISPLAYED_JOBS':
       return {
         ...state,
@@ -170,7 +165,7 @@ function reducer(state, action) {
       return { ...state, stage: STAGE.RESULT };
 
     case 'GO_RESUME_FROM_RESULT':
-      return { ...state, stage: STAGE.RESUME, resumeFromStage: STAGE.RESULT, supplementingRecordId: null, report: '', jobTypeRecs: [], growthSuggestions: [], draftResumeText: '', draftImportSource: '', selectedAttachment: null };
+      return { ...state, stage: STAGE.RESUME, resumeFromStage: STAGE.RESULT, supplementingRecordId: null, report: '', jobTypeRecs: [], draftResumeText: '', draftImportSource: '', selectedAttachment: null };
 
     case 'GO_RESUME_FROM_HISTORY':
       return {
@@ -182,8 +177,7 @@ function reducer(state, action) {
         supplementingRecordId: action.payload.id,
         report: '',
         jobTypeRecs: [],
-        growthSuggestions: [],
-        stage: STAGE.RESUME,
+              stage: STAGE.RESUME,
         resumeFromStage: STAGE.HISTORY_DETAIL,
         draftResumeText: '',
         draftImportSource: '',
@@ -268,12 +262,10 @@ export default function App({ autoStage }) {
       );
 
       const jobRecsPromise = generateJobTypeRecommendations(effectiveScores, effectiveJung, resumeText);
-      const growthPromise = generateGrowthSuggestions(effectiveScores, effectiveJung, resumeText);
 
-      const [finalReport, jobRecs, growthSugs] = await Promise.all([reportPromise, jobRecsPromise, growthPromise]);
+      const [finalReport, jobRecs] = await Promise.all([reportPromise, jobRecsPromise]);
 
       dispatch({ type: 'SET_JOB_TYPE_RECS', payload: jobRecs });
-      dispatch({ type: 'SET_GROWTH_SUGGESTIONS', payload: growthSugs });
 
       // Generate initial displayed jobs
       const matched = getMatchingJobs(effectiveScores, effectiveJung, effectiveMbti);
@@ -298,7 +290,6 @@ export default function App({ autoStage }) {
         resumeText,
         report: finalReport || '',
         jobTypeRecs: jobRecs,
-        growthSuggestions: growthSugs,
         resumeSkipped: false,
       };
 
@@ -329,8 +320,7 @@ export default function App({ autoStage }) {
         resumeText,
         report: '',
         jobTypeRecs: [],
-        growthSuggestions: [],
-      };
+            };
 
       if (state.supplementingRecordId) {
         updateHistoryRecord(state.supplementingRecordId, failedData);
@@ -373,8 +363,7 @@ export default function App({ autoStage }) {
         resumeText: '',
         report: '',
         jobTypeRecs: [],
-        growthSuggestions: [],
-        resumeSkipped: true,
+              resumeSkipped: true,
       });
     }
 
@@ -544,7 +533,6 @@ export default function App({ autoStage }) {
           mbtiType={state.mbtiType}
           report={state.report}
           assessmentType={state.assessmentType}
-          growthSuggestions={state.growthSuggestions}
           displayedJobs={state.displayedJobs}
           onRefreshJobs={handleRefreshJobs}
           onSelectJob={(id) => dispatch({ type: 'SELECT_JOB', payload: id })}

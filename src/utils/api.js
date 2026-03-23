@@ -1,4 +1,4 @@
-import { buildDeepReportPrompt, buildJobRecommendationPrompt, buildGrowthPrompt } from './scoring';
+import { buildDeepReportPrompt, buildJobRecommendationPrompt } from './scoring';
 
 const API_CONFIG = {
   baseUrl: import.meta.env.VITE_API_BASE_URL || 'https://api.openai.com/v1',
@@ -110,44 +110,6 @@ export async function generateJobTypeRecommendations(scores, jungScores, resume)
   }
 }
 
-/**
- * 生成成长建议（结构化 JSON）
- */
-export async function generateGrowthSuggestions(scores, jungScores, resume) {
-  if (!API_CONFIG.apiKey) {
-    return generateMockGrowthSuggestions(scores);
-  }
-
-  const prompt = buildGrowthPrompt(scores, jungScores, resume);
-
-  try {
-    const response = await fetch(`${API_CONFIG.baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_CONFIG.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: API_CONFIG.model,
-        messages: [
-          { role: 'system', content: '你是职业规划专家。请严格按JSON格式返回。' },
-          { role: 'user', content: prompt },
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-      }),
-    });
-
-    if (!response.ok) throw new Error(`API error: ${response.status}`);
-    const json = await response.json();
-    const text = json.choices?.[0]?.message?.content || '';
-    const match = text.match(/\[[\s\S]*\]/);
-    return match ? JSON.parse(match[0]) : generateMockGrowthSuggestions(scores);
-  } catch {
-    return generateMockGrowthSuggestions(scores);
-  }
-}
-
 // --- Mock generators ---
 
 function generateMockJobTypeRecs(scores) {
@@ -181,70 +143,6 @@ function generateMockJobTypeRecs(scores) {
   }
 
   return recs.slice(0, 3);
-}
-
-function generateMockGrowthSuggestions(scores) {
-  if (!scores) {
-    return [
-      { title: '自我觉察', description: '定期回顾自己的决策模式和情绪反应，建立自我认知的习惯。' },
-      { title: 'AI 时代突围', description: '识别你所在领域中 AI 难以替代的能力（如创意判断、人际共情），主动向这些方向深耕。' },
-      { title: '关系经营', description: '主动维护职场人际关系，每周与一位同事或朋友进行有质量的交流。' },
-    ];
-  }
-
-  const { E, A, C, N, O } = scores;
-  const suggestions = [];
-
-  if (N > 3.05) {
-    suggestions.push({
-      title: '情绪转化训练',
-      description: '建立"焦虑→行动"转化机制，每次焦虑时写下担忧和最小可执行步骤，打断内耗循环。',
-    });
-  }
-
-  if (E < 3.10) {
-    suggestions.push({
-      title: '弱关系经营',
-      description: '每周花15分钟给一位欣赏但不太熟的人发一条有价值的消息，维护职场"存在感"。',
-    });
-  }
-
-  if (C < 3.36) {
-    suggestions.push({
-      title: '两分钟启动法',
-      description: '任何任务，先做两分钟再决定是否继续。行动本身就是创造状态的最佳方式。',
-    });
-  }
-
-  if (O < 3.69) {
-    suggestions.push({
-      title: '舒适区挑战',
-      description: '每月刻意尝试一件新事物——新技能、新社交圈或新思考框架，保持认知弹性。',
-    });
-  }
-
-  if (A > 3.75 && N > 3.05) {
-    suggestions.push({
-      title: '健康拒绝术',
-      description: '练习不含歉意的拒绝：直接说"这个我做不了"，而非"不好意思可能没时间"。',
-    });
-  }
-
-  // AI 时代建议（固定主题）
-  suggestions.push({
-    title: 'AI 时代突围',
-    description: '学会将 AI 作为放大器而非替代品，聚焦你性格中 AI 无法复制的部分——人际判断、情绪感知、创意直觉。',
-  });
-
-  // Ensure at least 3
-  while (suggestions.length < 3) {
-    suggestions.push({
-      title: '反直觉挑战',
-      description: '定期做一件不在舒适区内的事，保持一点摩擦感是对抗性格"舒适陷阱"的最佳方式。',
-    });
-  }
-
-  return suggestions.slice(0, 3);
 }
 
 /**
@@ -303,13 +201,20 @@ async function generateMockReport(scores, jungScores, mbtiType, resume, onStream
     ? (highE ? '战略咨询、产品管理、创业、市场营销策划' : '研究分析、UX 设计、内容策略、数据科学')
     : (highC ? '项目管理、运营管理、财务分析、质量管控' : '客户成功、活动运营、业务拓展');
 
-  // Growth engine
-  const growthItems = [];
-  if (highN) growthItems.push('### 建立"焦虑转化"机制\n每次感到焦虑时，用 2 分钟写下"我在担心什么"和"我现在能做的最小一步是什么"。把模糊的恐惧转化为具体的行动，打断焦虑的自我循环。长期坚持，你会发现焦虑从"敌人"变成了"早期预警系统"。');
-  if (!highE) growthItems.push('### 刻意经营"弱关系"\n每周花 15 分钟给一位不太熟但你欣赏的人发一条有内容的消息。不需要社交，只需要"存在感维护"。职业发展中 70% 的机会来自弱关系网络。');
-  if (!highC) growthItems.push('### 采用"两分钟规则"\n任何能在两分钟内启动的任务，立刻开始。对你来说，行动本身就是创造状态的最佳方式。配合一个简单的 TODO 清单工具，把大目标拆成小到不可能失败的步骤。');
-  if (highA && highN) growthItems.push('### 练习"不含歉意的拒绝"\n下次想说"不"的时候，直接说"这个我做不了"，而不是"不好意思啊我可能没时间"。你的宜人性会让你想道歉，但你的情绪敏感性会因为道歉而更焦虑。健康的边界是最好的情绪防护墙。');
-  if (growthItems.length < 3) growthItems.push('### 定期做"反直觉挑战"\n每月刻意做一件不在你舒适区内的事——参加一场社交活动、学一个完全陌生的技能、或者主动向别人征求负面反馈。保持一点摩擦感，是对抗性格"舒适陷阱"的最佳方式。');
+  // Growth engine — 三子模块
+  const aiGrowth = highO
+    ? '你的开放性让你天然适合探索 AI 工具——学会用 AI 处理重复性分析工作，把省下的时间投入需要创造力和人际判断的高价值任务。'
+    : '你的务实和执行力是 AI 无法替代的核心优势——专注于需要"人盯人"落地执行的场景，同时学会用 AI 辅助信息收集和初步分析，提升效率。';
+
+  let habitGrowth = '';
+  if (highN) habitGrowth = '每次感到焦虑时，用 2 分钟写下"我在担心什么"和"我现在能做的最小一步是什么"。把模糊的恐惧转化为具体的行动，打断焦虑的自我循环。';
+  else if (!highE) habitGrowth = '每周花 15 分钟给一位不太熟但你欣赏的人发一条有内容的消息。不需要变社牛，只需要"存在感维护"。职业发展中 70% 的机会来自弱关系网络。';
+  else if (!highC) habitGrowth = '任何能在两分钟内启动的任务，立刻开始。配合一个简单的 TODO 清单工具，把大目标拆成小到不可能失败的步骤。';
+  else habitGrowth = '每月刻意做一件不在你舒适区内的事——参加一场社交活动、学一个陌生的技能、或者主动向别人征求负面反馈。';
+
+  const skillGrowth = highO
+    ? (highE ? '系统学习商业分析框架（如麦肯锡 MECE、波特五力），把你的发散思维转化为结构化的商业洞察能力。' : '深入学习 Python 数据可视化（Plotly/Streamlit），把学术分析能力转化为可交付的商业汇报能力。')
+    : (highC ? '学习一门项目管理方法论（如 PMP 或 Scrum），把你的执行力系统化为可复制的管理能力。' : '系统学习结构化表达（金字塔原理），让你的想法能被快速理解和采纳。');
 
   // Summary quote
   const quote = highO
@@ -342,7 +247,14 @@ ${tension}
 
 ## 成长引擎
 
-${growthItems.slice(0, 3).join('\n\n')}
+### AI 时代突围
+${aiGrowth}
+
+### 习惯养成
+${habitGrowth}
+
+### 技能训练
+${skillGrowth}
 
 ## 寄语
 
@@ -398,14 +310,14 @@ async function generateMockManualReport(jungScores, mbtiType, resume, onStream) 
 
 ## 成长引擎
 
-### 从认知到行动
-给自己设定一个"72小时规则"：任何新的自我洞察，必须在72小时内转化为一个具体的小行动。认知只有通过行为验证，才能真正内化。
+### AI 时代突围
+识别你所在领域中 AI 难以替代的能力——深度人际理解、价值判断、跨文化沟通。主动学会用 AI 工具（如 ChatGPT、Notion AI）处理信息整理和初步分析，把精力聚焦在需要人类判断力的高价值环节。
 
-### 建立反馈循环
-主动向信任的同事和朋友征求反馈："你觉得我在什么情况下表现最好？"外部视角能帮你校准自我认知的盲区。
+### 习惯养成
+给自己设定一个"72小时规则"：任何新的自我洞察，必须在72小时内转化为一个具体的小行动。同时每周主动向一位信任的同事征求反馈："你觉得我在什么情况下表现最好？"
 
-### 拥抱不确定性
-练习在"不完全了解自己"的状态下做决策。完美的自我认知是不存在的，但足够好的行动在每一刻都是可能的。
+### 技能训练
+系统学习一门数据分析工具（Python/R/SQL），让你的洞察力有数据支撑。同时练习结构化表达（金字塔原理），让你的深度思考能被快速理解和采纳。
 
 ## 寄语
 

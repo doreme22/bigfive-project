@@ -126,9 +126,16 @@ ${analysisGuide}
 
 ## 成长引擎
 
-给出 3 条最关键的成长建议。每条用 ### 小标题，后接一段具体说明：
-- 为什么这对此人特别重要（连接到性格特征）
-- 具体怎么做（可操作的行动步骤，不要空泛的鸡汤）
+严格按以下三个子模块输出，每个用 ### 作标题，内容必须具体可执行，禁止空泛鸡汤。
+
+### AI 时代突围
+结合此人的性格特征和简历背景，给出在 AI 时代应如何定位自己、具体该往哪个方向卡位的建议。要说清楚：AI 替代不了此人的什么能力，以及该如何利用 AI 放大自身优势。
+
+### 习惯养成
+针对此人最突出的性格短板，给出 1-2 个具体的行为处方。不要说"变得更外向"这种废话，要给出"每周做 X"级别的可操作指令。
+
+### 技能训练
+结合简历背景和前面推荐的岗位方向，列出 1-2 个此人最该补的具体技能，说明为什么需要以及从哪里开始学。
 
 ## 寄语
 
@@ -161,30 +168,3 @@ export function buildJobRecommendationPrompt(scores, jungScores, resume) {
 [{"type": "岗位类型名称", "reason": "30字以内的推荐理由", "tags": ["标签1", "标签2"]}]`;
 }
 
-/**
- * 构建成长建议 prompt
- */
-export function buildGrowthPrompt(scores, jungScores, resume) {
-  let dataStr = '';
-  if (scores) {
-    const scoresStr = Object.entries(scores)
-      .map(([dim, val]) => `${dimensionNames[dim]}(${dim}): ${val}`)
-      .join(', ');
-    dataStr += `BFI 性格数据: {${scoresStr}}`;
-  }
-  if (jungScores) {
-    if (dataStr) dataStr += '，';
-    dataStr += `荣格八维: ${JSON.stringify(jungScores)}`;
-  }
-  if (resume) {
-    if (dataStr) dataStr += '，';
-    dataStr += `简历摘要: ${resume.slice(0, 500)}`;
-  }
-
-  return `基于用户的${dataStr}
-
-请给出 3 条最关键的个人成长建议。其中至少 1 条需围绕"AI 时代下，该性格与背景的人应如何发展"展开，给出具体可操作的方向。
-
-严格按以下 JSON 格式返回，不要包含其他文字：
-[{"title": "建议标题(5字以内)", "description": "80字以内的具体建议"}]`;
-}

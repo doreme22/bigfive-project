@@ -83,7 +83,7 @@ function splitBoldItems(content) {
 
 function extractSection(markdown, heading) {
   if (!markdown) return null;
-  const regex = new RegExp(`##\\s*${heading}([\\s\\S]*?)(?=##\\s|$)`);
+  const regex = new RegExp(`##\\s*${heading}([\\s\\S]*?)(?=\\n## |$)`);
   const match = markdown.match(regex);
   return match ? match[1].trim() : null;
 }

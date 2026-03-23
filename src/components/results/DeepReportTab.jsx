@@ -5,7 +5,6 @@ import ReportSummary from './ReportSummary';
 
 export default function DeepReportTab({
   report,
-  growthSuggestions,
   displayedJobs,
   onRefreshJobs,
   onSelectJob,
@@ -19,7 +18,7 @@ export default function DeepReportTab({
         onRefreshJobs={onRefreshJobs}
         onSelectJob={onSelectJob}
       />
-      <GrowthEngineSection report={report} growthSuggestions={growthSuggestions} />
+      <GrowthEngineSection report={report} />
       <ReportSummary report={report} />
 
       {/* Disclaimer */}
