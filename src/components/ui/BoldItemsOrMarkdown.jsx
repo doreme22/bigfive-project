@@ -1,15 +1,17 @@
+import { useState, useRef, useEffect } from 'react';
 import Markdown from 'react-markdown';
 
 /**
  * Renders content as numbered bold-item cards if the content contains
  * **Title**：description patterns, otherwise falls back to Markdown.
+ * Long descriptions are truncated to 3 lines with an expand toggle.
  */
 export default function BoldItemsOrMarkdown({ content }) {
   if (!content) return null;
 
   const items = parseBoldItems(content);
 
-  if (items.length >= 2) {
+  if (items.length >= 1) {
     return (
       <div className="space-y-0">
         {items.map((item, j) => (
@@ -26,7 +28,7 @@ export default function BoldItemsOrMarkdown({ content }) {
             {/* Right: title + description */}
             <div className={`flex-1 min-w-0 ${j < items.length - 1 ? 'pb-3' : ''}`}>
               <p className="text-[13px] font-medium text-black leading-[18px] tracking-[0.5px]">{item.title}</p>
-              <p className="text-[13px] text-[#656D76] leading-[18px] tracking-[0.5px] mt-1">{item.desc}</p>
+              <ExpandableDesc desc={item.desc} />
             </div>
           </div>
         ))}
@@ -35,8 +37,49 @@ export default function BoldItemsOrMarkdown({ content }) {
   }
 
   return (
-    <div className="text-[13px] text-black leading-[18px] tracking-[0.5px]">
+    <div className="text-[13px] text-[#656D76] leading-[18px] tracking-[0.5px]">
       <Markdown>{content}</Markdown>
+    </div>
+  );
+}
+
+const LINE_HEIGHT = 18;
+const MAX_LINES = 4;
+
+function ExpandableDesc({ desc }) {
+  const [expanded, setExpanded] = useState(false);
+  const [needsTruncation, setNeedsTruncation] = useState(false);
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    if (textRef.current) {
+      const scrollH = textRef.current.scrollHeight;
+      const maxH = LINE_HEIGHT * MAX_LINES;
+      setNeedsTruncation(scrollH > maxH + LINE_HEIGHT / 2);
+    }
+  }, [desc]);
+
+  return (
+    <div className="mt-1">
+      <p
+        ref={textRef}
+        className="text-[13px] text-[#656D76] leading-[18px] tracking-[0.5px]"
+        style={
+          !expanded && needsTruncation
+            ? { maxHeight: `${LINE_HEIGHT * MAX_LINES}px`, overflow: 'hidden' }
+            : undefined
+        }
+      >
+        {desc}
+      </p>
+      {needsTruncation && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-[12px] text-[#BBC1C9] mt-1 active:opacity-60"
+        >
+          {expanded ? '收起' : '展开更多'}
+        </button>
+      )}
     </div>
   );
 }
@@ -56,8 +99,8 @@ function parseBoldItems(content) {
       items.push({ title: match[1], desc: match[2].trim() });
     }
   }
-  // Only use card rendering if all paragraphs matched
-  if (items.length >= 2 && items.length === parts.length) {
+  // Only use structured rendering if all paragraphs matched
+  if (items.length >= 1 && items.length === parts.length) {
     return items;
   }
   return [];

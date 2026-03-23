@@ -20,16 +20,9 @@ export default function GrowthEngineSection({ report }) {
         {modules.length > 0 ? (
           <div className="space-y-6">
             {modules.map((mod, i) => (
-              <div key={i}>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="w-[14px] h-[14px] rounded-tl-full rounded-tr-full rounded-br-full bg-[#6FCDAE] flex items-center justify-center text-[10px] font-semibold text-white">
-                      {i + 1}
-                    </span>
-                    <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{mod.title}</span>
-                  </div>
-                  <BoldItemsOrMarkdown content={mod.content} />
-                </div>
+              <div key={i} className="flex flex-col gap-2">
+                <span className="text-sm font-semibold text-[#6FCDAE] leading-[21px]">{mod.title}</span>
+                <BoldItemsOrMarkdown content={mod.content} />
               </div>
             ))}
           </div>
