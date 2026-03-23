@@ -14,7 +14,7 @@ export default function BestBattlefieldSection({
     return null;
   }
 
-  const subs = section ? splitByBoldItems(section) : [];
+  const subs = section ? splitByStandaloneBold(section) : [];
 
   return (
     <div className="mb-4">
@@ -89,10 +89,10 @@ function extractSection(markdown, heading) {
 }
 
 /**
- * Split by every bold heading pattern: **Title**、**Title**：content、### Title
- * Each becomes its own sub-section.
+ * Split by standalone bold headings: **Title** on its own line (optionally with ：).
+ * Lines like **SubTitle**：description are kept as content, not section breaks.
  */
-function splitByBoldItems(markdown) {
+function splitByStandaloneBold(markdown) {
   if (!markdown) return [];
 
   const lines = markdown.split('\n');
@@ -119,12 +119,11 @@ function splitByBoldItems(markdown) {
       continue;
     }
 
-    // **Title** standalone or **Title**：content or - **Title**：content
-    const bold = trimmed.match(/^[-*]?\s*\*\*([^*]+)\*\*\s*[：:]?\s*(.*)/);
-    if (bold) {
+    // Standalone bold: **Title** with no text after (optionally ：)
+    const standalone = trimmed.match(/^\*\*([^*]+)\*\*\s*[：:]?\s*$/);
+    if (standalone) {
       flush();
-      currentTitle = bold[1];
-      if (bold[2]) contentLines.push(bold[2]);
+      currentTitle = standalone[1];
       continue;
     }
 
