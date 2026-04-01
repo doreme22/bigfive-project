@@ -48,6 +48,20 @@ export default function ResumePage({
   const [onlineResumeData, setOnlineResumeData] = useState(null);
   const [hasAttachments, setHasAttachments] = useState(false);
 
+  // Keyboard visibility: scroll focused textarea into view
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => {
+      const focused = document.activeElement;
+      if (focused?.tagName === 'TEXTAREA') {
+        focused.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+    vv.addEventListener('resize', onResize);
+    return () => vv.removeEventListener('resize', onResize);
+  }, []);
+
   // Fetch online data to determine display state
   useEffect(() => {
     (async () => {
@@ -248,7 +262,10 @@ export default function ResumePage({
 
               <textarea
                 value={resumeText}
-                onChange={(e) => setResumeText(e.target.value)}
+                onChange={(e) => {
+                  setResumeText(e.target.value);
+                  setImportSource('');
+                }}
                 placeholder="在这里粘贴你的简历内容…&#10;&#10;包括：教育经历、工作经历、项目经验、技能特长等"
                 className="w-full h-[224px] bg-white rounded-[12px] px-4 py-5 text-[14px] text-black placeholder-[#bbc1c9] resize-none focus:outline-none scrollbar-hide"
               />
@@ -298,7 +315,10 @@ export default function ResumePage({
 
               <textarea
                 value={resumeText}
-                onChange={(e) => setResumeText(e.target.value)}
+                onChange={(e) => {
+                  setResumeText(e.target.value);
+                  setImportSource('');
+                }}
                 placeholder="在这里粘贴你的简历内容…&#10;&#10;包括：教育经历、工作经历、项目经验、技能特长等"
                 className="w-full h-[224px] bg-white rounded-[12px] px-4 py-5 text-[14px] text-black placeholder-[#bbc1c9] resize-none focus:outline-none scrollbar-hide"
               />
